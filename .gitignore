@@ -1,0 +1,10 @@
+node_modules
+dist
+.env
+.env.local
+*.db
+*.db-journal
+apps/api/uploads/*
+!apps/api/uploads/.gitkeep
+coverage
+.DS_Store

@@ -1,0 +1,235 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum PlanType {
+  residencial
+  empresarial
+  dedicado
+  outro
+}
+
+enum ContentStatus {
+  draft
+  published
+}
+
+enum LeadStatus {
+  novo
+  em_andamento
+  respondido
+  arquivado
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Banner {
+  id          String   @id @default(cuid())
+  title       String
+  subtitle    String?
+  buttonText  String?
+  buttonLink  String?
+  imageUrl    String?
+  carouselType String  @default("content")
+  highlights  String   @default("[]")
+  location    String   @default("home")
+  active      Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model InternetPlan {
+  id          String   @id @default(cuid())
+  name        String
+  downloadMbps Int
+  uploadMbps  Int?
+  priceCents  Int
+  type        PlanType @default(residencial)
+  description String?
+  benefits    String   @default("[]")
+  active      Boolean  @default(true)
+  featured    Boolean  @default(false)
+  showOnHome  Boolean  @default(true)
+  complementIds String @default("[]")
+  sortOrder   Int      @default(0)
+  legalNotes  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FeatureHighlight {
+  id        String   @id @default(cuid())
+  title     String
+  icon      String   @default("Gauge")
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlanComplement {
+  id        String   @id @default(cuid())
+  name      String
+  category  String   @default("app")
+  logoUrl   String?
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BlogCategory {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  active      Boolean    @default(true)
+  posts       BlogPost[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model BlogPost {
+  id             String        @id @default(cuid())
+  title          String
+  slug           String        @unique
+  summary        String?
+  content        String
+  coverImageUrl  String?
+  author         String        @default("MEGANET")
+  status         ContentStatus @default(draft)
+  seoTitle       String?
+  seoDescription String?
+  publishedAt    DateTime?
+  categoryId      String?
+  category        BlogCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  text      String
+  location  String?
+  avatarUrl String?
+  rating    Int?
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id            String     @id @default(cuid())
+  name          String
+  phone         String
+  email         String?
+  subject       String?
+  message       String
+  requestType   String     @default("comercial")
+  status        LeadStatus @default(novo)
+  read          Boolean    @default(false)
+  internalNotes String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model CoverageRequest {
+  id            String     @id @default(cuid())
+  name          String
+  phone         String
+  address       String
+  neighborhood  String
+  city          String
+  reference     String?
+  planInterest  String?
+  status        LeadStatus @default(novo)
+  read          Boolean    @default(false)
+  internalNotes String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model SiteSettings {
+  id                         String   @id @default("main")
+  siteTitle                  String   @default("MEGANET")
+  seoDescription             String   @default("Internet fibra óptica rápida, estável e com atendimento próximo.")
+  logoUrl                    String?
+  faviconUrl                 String?
+  primaryColor               String   @default("#0877c8")
+  secondaryColor             String   @default("#20c7a5")
+  headerBackgroundColor      String   @default("#ffffff")
+  headerTextColor            String   @default("#102133")
+  footerBackgroundColor      String   @default("#ffffff")
+  footerTextColor            String   @default("#102133")
+  carouselFeatureBandItems   String   @default("[\"Mega Fibra\",\"Suporte Total\",\"Ponto Gamer\",\"Wi-Fi 6\",\"Wi-Fi Plus\",\"Empresas\",\"Super Upload\"]")
+  ctaPlansText               String   @default("Ver planos")
+  ctaWhatsappText            String   @default("Falar no WhatsApp")
+  whatsappContractMessage    String   @default("Olá! Quero contratar um plano da MEGANET.")
+  whatsappSupportMessage     String   @default("Olá! Preciso de suporte da MEGANET.")
+  whatsappCoverageMessage    String   @default("Olá! Quero consultar cobertura da MEGANET.")
+  animationsEnabled          Boolean  @default(true)
+  externalScripts            String?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CompanyInfo {
+  id                String   @id @default("main")
+  companyName       String   @default("MEGANET")
+  shortDescription  String   @default("Internet de alta performance com atendimento próximo e estrutura profissional.")
+  phone             String?
+  whatsapp          String?
+  email             String?
+  address           String?
+  city              String?
+  state             String?
+  businessHours     String?
+  mapsEmbedUrl      String?
+  cnpj              String?
+  aboutTitle        String   @default("Internet confiável para conectar sua rotina")
+  aboutText         String
+  history           String?
+  differentials     String   @default("[]")
+  institutionalImageUrl String?
+  yearsInBusiness   Int?
+  customerCount     Int?
+  citiesServed      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model MissionVisionValues {
+  id          String   @id @default("main")
+  mission     String
+  vision      String
+  values      String
+  complement  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom';
 import { Mail, MapPin, Menu, Phone, X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { api } from '../../lib/api';
 import { whatsappLink } from '../../lib/format';
 import { ButtonLink } from '../ui/Button';
@@ -22,6 +23,34 @@ const nav = [
   ['/contato', 'Contato']
 ];
 
+function normalizeHex(value: unknown, fallback: string) {
+  const color = String(value ?? '').trim();
+  if (/^#[0-9a-fA-F]{3}$/.test(color)) {
+    return `#${color.slice(1).split('').map((digit) => digit + digit).join('')}`;
+  }
+  if (/^#[0-9a-fA-F]{6}$/.test(color)) return color;
+  return fallback;
+}
+
+function hexToRgb(color: string) {
+  const hex = normalizeHex(color, '#0877c8').slice(1);
+  return [
+    Number.parseInt(hex.slice(0, 2), 16),
+    Number.parseInt(hex.slice(2, 4), 16),
+    Number.parseInt(hex.slice(4, 6), 16)
+  ] as const;
+}
+
+function readableText(color: string) {
+  const [r, g, b] = hexToRgb(color);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.62 ? '#102133' : '#ffffff';
+}
+
+function alpha(color: string, opacity: number) {
+  return `rgb(${hexToRgb(color).join(' ')} / ${opacity})`;
+}
+
 export function PublicLayout() {
   const [open, setOpen] = useState(false);
   const { data } = useQuery({
@@ -33,6 +62,17 @@ export function PublicLayout() {
   const companyName = company?.companyName ?? settings?.siteTitle ?? 'MEGANET';
   const subscriberCenterUrl = String(settings?.subscriberCenterUrl ?? '').trim();
   const careersUrl = String(settings?.careersUrl ?? '').trim();
+  const primaryColor = normalizeHex(settings?.primaryColor, '#0877c8');
+  const secondaryColor = normalizeHex(settings?.secondaryColor, '#20c7a5');
+  const primaryButtonStyle: CSSProperties = {
+    backgroundColor: primaryColor,
+    color: readableText(primaryColor)
+  };
+  const secondaryButtonStyle: CSSProperties = {
+    backgroundColor: '#ffffff',
+    color: primaryColor,
+    boxShadow: `inset 0 0 0 1px ${alpha(primaryColor, 0.22)}`
+  };
   const headerStyle = {
     backgroundColor: settings?.headerBackgroundColor ?? '#ffffff',
     color: settings?.headerTextColor ?? '#102133'
@@ -57,10 +97,10 @@ export function PublicLayout() {
             ))}
           </nav>
           <div className="hidden flex-wrap items-center justify-end gap-2 xl:flex">
-            {subscriberCenterUrl ? <ButtonLink href={subscriberCenterUrl} target="_blank" rel="noreferrer" variant="secondary" className="h-10 px-3">Central do assinante</ButtonLink> : null}
-            {careersUrl ? <ButtonLink href={careersUrl} target="_blank" rel="noreferrer" variant="secondary" className="h-10 px-3">Trabalhe conosco</ButtonLink> : null}
-            <ButtonLink href="/planos" variant="secondary" className="h-10 px-3">{settings?.ctaPlansText ?? 'Ver planos'}</ButtonLink>
-            <ButtonLink href={whatsappLink(company?.whatsapp, settings?.whatsappContractMessage)} target="_blank" rel="noreferrer">WhatsApp</ButtonLink>
+            {subscriberCenterUrl ? <ButtonLink href={subscriberCenterUrl} target="_blank" rel="noreferrer" variant="secondary" className="h-10 px-3" style={secondaryButtonStyle}>Central do assinante</ButtonLink> : null}
+            {careersUrl ? <ButtonLink href={careersUrl} target="_blank" rel="noreferrer" variant="secondary" className="h-10 px-3" style={secondaryButtonStyle}>Trabalhe conosco</ButtonLink> : null}
+            <ButtonLink href="/planos" variant="secondary" className="h-10 px-3" style={secondaryButtonStyle}>{settings?.ctaPlansText ?? 'Ver planos'}</ButtonLink>
+            <ButtonLink href={whatsappLink(company?.whatsapp, settings?.whatsappContractMessage)} target="_blank" rel="noreferrer" style={primaryButtonStyle}>WhatsApp</ButtonLink>
           </div>
           <button className="grid h-10 w-10 place-items-center rounded-lg border border-current/20 xl:hidden" onClick={() => setOpen(!open)} aria-label="Abrir menu">
             {open ? <X size={20} /> : <Menu size={20} />}
@@ -70,9 +110,9 @@ export function PublicLayout() {
           <div className="border-t border-white/15 px-4 py-4 xl:hidden" style={headerStyle}>
             <div className="grid gap-3">
               {nav.map(([to, label]) => <Link key={to} to={to} onClick={() => setOpen(false)} className="font-bold opacity-85">{label}</Link>)}
-              {subscriberCenterUrl ? <ButtonLink href={subscriberCenterUrl} target="_blank" rel="noreferrer" variant="secondary">Central do assinante</ButtonLink> : null}
-              {careersUrl ? <ButtonLink href={careersUrl} target="_blank" rel="noreferrer" variant="secondary">Trabalhe conosco</ButtonLink> : null}
-              <ButtonLink href={whatsappLink(company?.whatsapp, settings?.whatsappContractMessage)} target="_blank" rel="noreferrer">Falar no WhatsApp</ButtonLink>
+              {subscriberCenterUrl ? <ButtonLink href={subscriberCenterUrl} target="_blank" rel="noreferrer" variant="secondary" style={secondaryButtonStyle}>Central do assinante</ButtonLink> : null}
+              {careersUrl ? <ButtonLink href={careersUrl} target="_blank" rel="noreferrer" variant="secondary" style={secondaryButtonStyle}>Trabalhe conosco</ButtonLink> : null}
+              <ButtonLink href={whatsappLink(company?.whatsapp, settings?.whatsappContractMessage)} target="_blank" rel="noreferrer" style={primaryButtonStyle}>Falar no WhatsApp</ButtonLink>
             </div>
           </div>
         ) : null}
@@ -103,7 +143,7 @@ export function PublicLayout() {
               {company?.address ? <span className="flex gap-2"><MapPin size={17} /> {company.address}</span> : null}
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
-              {data?.socialLinks?.map((link) => <a key={link.id} className="rounded-full bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700" href={link.url} target="_blank" rel="noreferrer">{link.name}</a>)}
+              {data?.socialLinks?.map((link) => <a key={link.id} className="rounded-full px-3 py-1 text-xs font-bold" style={{ backgroundColor: alpha(secondaryColor, 0.14), color: secondaryColor }} href={link.url} target="_blank" rel="noreferrer">{link.name}</a>)}
             </div>
           </div>
         </div>

@@ -8,12 +8,20 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     allowedHosts: [
-      'meganetma.com.br',
+      '.meganetma.com.br',
       'www.meganetma.com.br'
     ],
     proxy: {
-      '/api': 'http://localhost:3333',
-      '/uploads': 'http://localhost:3333'
+      '/api': {
+        target: 'https://sites-site-meganet.gcpwp3.easypanel.host',
+        changeOrigin: true,
+        secure: true
+      },
+      '/uploads': {
+        target: 'https://sites-site-meganet.gcpwp3.easypanel.host',
+        changeOrigin: true,
+        secure: true
+      }
     }
   },
 

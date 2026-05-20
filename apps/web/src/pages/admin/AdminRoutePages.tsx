@@ -32,6 +32,12 @@ const complementTypes = [
 const userRoles = (Object.entries(roleLabels) as [AdminRole, string][])
   .map(([value, label]) => ({ value, label }));
 
+const siteTemplates = [
+  { label: 'Clássico atual', value: 'classic' },
+  { label: 'Hub regional', value: 'hub' },
+  { label: 'Órbita fibra', value: 'orbit' }
+];
+
 export function BannersAdminPage() {
   return <ResourcePage title="Carrossel da Home" endpoint="/api/admin/banners" fields={[
     { name: 'title', label: 'Título / nome interno', required: true },
@@ -200,6 +206,7 @@ export function SettingsAdminPage() {
   return <SingletonPage title="Configurações gerais" endpoint="/api/admin/settings" fields={[
     { name: 'siteTitle', label: 'Título do site' },
     { name: 'adminSidebarTitle', label: 'Nome no topo do admin' },
+    { name: 'siteTemplate', label: 'Template visual do site', type: 'select', options: siteTemplates },
     { name: 'seoDescription', label: 'Descrição SEO padrão', type: 'textarea' },
     { name: 'logoUrl', label: 'Logo', type: 'image' },
     { name: 'faviconUrl', label: 'Favicon', type: 'image' },

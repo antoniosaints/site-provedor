@@ -10,6 +10,7 @@ import { PlanCard } from '../../components/public/PlanCard';
 import { Seo } from '../../components/public/Seo';
 import { HeroCarousel } from '../../components/public/HeroCarousel';
 import { TestimonialsSection } from '../../components/public/TestimonialsSection';
+import { HubHomeTemplate, OrbitHomeTemplate } from '../../components/public/HomeTemplates';
 
 export function HomePage() {
   const { data, isLoading } = useQuery({ queryKey: ['home'], queryFn: () => api.get<any>('/api/public/home') });
@@ -19,6 +20,10 @@ export function HomePage() {
   const settings = data?.settings;
   const mvv = data?.missionVisionValues;
   const companyName = company?.companyName ?? settings?.siteTitle ?? 'MEGANET';
+  const siteTemplate = settings?.siteTemplate ?? 'classic';
+
+  if (siteTemplate === 'hub') return <HubHomeTemplate data={data} companyName={companyName} />;
+  if (siteTemplate === 'orbit') return <OrbitHomeTemplate data={data} companyName={companyName} />;
 
   return (
     <main>

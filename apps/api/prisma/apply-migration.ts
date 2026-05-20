@@ -106,6 +106,7 @@ async function main() {
       ['footerBackgroundColor', "'#ffffff'"],
       ['footerTextColor', "'#102133'"],
       ['adminSidebarTitle', "'MEGANET'"],
+      ['siteTemplate', "'classic'"],
       ['carouselFeatureBandItems', "'[\"Mega Fibra\",\"Suporte Total\",\"Ponto Gamer\",\"Wi-Fi 6\",\"Wi-Fi Plus\",\"Empresas\",\"Super Upload\"]'"]
     ] as const;
 

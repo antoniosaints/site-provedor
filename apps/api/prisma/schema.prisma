@@ -169,6 +169,7 @@ model SiteSettings {
   id                         String   @id @default("main")
   siteTitle                  String   @default("MEGANET")
   adminSidebarTitle          String   @default("MEGANET")
+  siteTemplate               String   @default("classic")
   seoDescription             String   @default("Internet fibra óptica rápida, estável e com atendimento próximo.")
   logoUrl                    String?
   faviconUrl                 String?

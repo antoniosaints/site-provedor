@@ -151,6 +151,7 @@ CREATE TABLE "SiteSettings" (
     "id" TEXT NOT NULL PRIMARY KEY DEFAULT 'main',
     "siteTitle" TEXT NOT NULL DEFAULT 'MEGANET',
     "adminSidebarTitle" TEXT NOT NULL DEFAULT 'MEGANET',
+    "siteTemplate" TEXT NOT NULL DEFAULT 'classic',
     "seoDescription" TEXT NOT NULL DEFAULT 'Internet fibra óptica rápida, estável e com atendimento próximo.',
     "logoUrl" TEXT,
     "faviconUrl" TEXT,

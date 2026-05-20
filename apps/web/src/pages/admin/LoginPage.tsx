@@ -8,14 +8,36 @@ import { Card } from '../../components/ui/Card';
 import { FieldWrap, Input } from '../../components/ui/Field';
 import { Logo } from '../../components/public/Logo';
 
+type LoginValues = {
+  email: string;
+  password: string;
+};
+
+type AuthSession = {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+};
+
 export function LoginPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { register, handleSubmit } = useForm({ defaultValues: { email: 'admin@meganet.com.br', password: 'admin123' } });
   const mutation = useMutation({
-    mutationFn: (values: any) => api.post('/api/auth/login', values),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['me'] });
+    mutationFn: async (values: LoginValues) => {
+      await api.post('/api/auth/login', values);
+
+      try {
+        return await api.get<AuthSession>('/api/auth/me');
+      } catch {
+        throw new Error('Login aceito, mas a sessão não foi mantida. Verifique se a API está em um domínio próprio do site, como api.meganetma.com.br, ou se o navegador bloqueou o cookie de sessão.');
+      }
+    },
+    onSuccess: (session) => {
+      queryClient.setQueryData(['me'], session);
       navigate('/admin');
     }
   });

@@ -5,6 +5,7 @@ import { FieldConfig } from '../../components/admin/AdminForm';
 import { api } from '../../lib/api';
 import { formatMoney } from '../../lib/format';
 import { highlightIconOptions } from '../../lib/highlight-icons';
+import { roleLabels, type AdminRole } from '../../lib/admin-permissions';
 
 const planTypes = [
   { label: 'Residencial', value: 'residencial' },
@@ -27,6 +28,9 @@ const complementTypes = [
   { label: 'App', value: 'app' },
   { label: 'Serviço', value: 'servico' }
 ];
+
+const userRoles = (Object.entries(roleLabels) as [AdminRole, string][])
+  .map(([value, label]) => ({ value, label }));
 
 export function BannersAdminPage() {
   return <ResourcePage title="Carrossel da Home" endpoint="/api/admin/banners" fields={[
@@ -178,9 +182,24 @@ export function SocialLinksAdminPage() {
   ]} />;
 }
 
+export function UsersAdminPage() {
+  return <ResourcePage title="Usuários" endpoint="/api/admin/users" fields={(editing) => [
+    { name: 'name', label: 'Nome', required: true },
+    { name: 'email', label: 'E-mail', required: true },
+    { name: 'password', label: editing ? 'Nova senha (opcional)' : 'Senha inicial', type: 'password', required: !editing },
+    { name: 'role', label: 'Permissão', type: 'select', options: userRoles, required: true }
+  ]} columns={[
+    { key: 'name', label: 'Nome' },
+    { key: 'email', label: 'E-mail' },
+    { key: 'role', label: 'Permissão', render: (item) => roleLabels[item.role as AdminRole] ?? item.role },
+    { key: 'createdAt', label: 'Criado em', render: (item) => new Date(item.createdAt).toLocaleDateString('pt-BR') }
+  ]} />;
+}
+
 export function SettingsAdminPage() {
   return <SingletonPage title="Configurações gerais" endpoint="/api/admin/settings" fields={[
     { name: 'siteTitle', label: 'Título do site' },
+    { name: 'adminSidebarTitle', label: 'Nome no topo do admin' },
     { name: 'seoDescription', label: 'Descrição SEO padrão', type: 'textarea' },
     { name: 'logoUrl', label: 'Logo', type: 'image' },
     { name: 'faviconUrl', label: 'Favicon', type: 'image' },
@@ -195,6 +214,8 @@ export function SettingsAdminPage() {
     { name: 'whatsappContractMessage', label: 'Mensagem contratação', type: 'textarea' },
     { name: 'whatsappSupportMessage', label: 'Mensagem suporte', type: 'textarea' },
     { name: 'whatsappCoverageMessage', label: 'Mensagem cobertura', type: 'textarea' },
+    { name: 'subscriberCenterUrl', label: 'Link da central do assinante' },
+    { name: 'careersUrl', label: 'Link trabalhe conosco' },
     { name: 'animationsEnabled', label: 'Ativar animações no site público', type: 'boolean' },
     { name: 'externalScripts', label: 'Scripts externos', type: 'textarea' }
   ]} />;

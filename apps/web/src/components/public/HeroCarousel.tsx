@@ -87,7 +87,8 @@ export function HeroCarousel({ banners, companyName = 'MEGANET', featureBandItem
   }
 
   return (
-    <section className="relative overflow-hidden bg-brand-900 text-white">
+    <section className="bg-brand-900 text-white">
+      <div className="relative overflow-hidden">
       {isImageOnly && slide.imageUrl ? (
         <img src={assetUrl(slide.imageUrl)} alt="" className="absolute inset-0 h-full w-full object-cover" />
       ) : (
@@ -109,9 +110,9 @@ export function HeroCarousel({ banners, companyName = 'MEGANET', featureBandItem
       ) : null}
 
       {isImageOnly ? (
-        <div key={slide.id} className={`relative mx-auto min-h-[620px] max-w-7xl px-4 pt-16 ${bandItems.length ? 'pb-28 lg:pb-32' : 'pb-16'}`} />
+        <div key={slide.id} className="relative mx-auto min-h-[620px] max-w-7xl px-4 pb-16 pt-16" />
       ) : (
-        <div className="relative mx-auto grid min-h-[620px] max-w-7xl gap-10 px-4 pb-28 pt-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-32 lg:pt-20">
+        <div className="relative mx-auto grid min-h-[620px] max-w-7xl gap-10 px-4 pb-16 pt-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:pb-20 lg:pt-20">
           <div key={slide.id} className="motion-reveal self-center text-center lg:text-left">
             <span className="inline-flex rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white ring-1 ring-white/25 backdrop-blur">
               Fibra óptica {companyName}
@@ -158,15 +159,16 @@ export function HeroCarousel({ banners, companyName = 'MEGANET', featureBandItem
       )}
 
       {slides.length > 1 ? (
-        <div className={`absolute left-1/2 z-20 flex -translate-x-1/2 gap-2 ${bandItems.length ? 'bottom-32 lg:bottom-28' : 'bottom-6'}`}>
+        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-2">
           {slides.map((item, index) => (
             <button key={item.id} type="button" onClick={() => setActive(index)} className={`h-3 rounded-full transition-[width,background-color] duration-200 ${index === active ? 'w-8 bg-white' : 'w-3 bg-white/45 hover:bg-white/70'}`} aria-label={`Ir para slide ${index + 1}`} />
           ))}
         </div>
       ) : null}
+      </div>
 
       {bandItems.length ? (
-        <div className="absolute bottom-0 left-0 right-0 z-10 bg-brand-700/80 backdrop-blur">
+        <div className="relative z-10 bg-brand-700/80 backdrop-blur">
           <div className="motion-stagger mx-auto flex max-w-7xl flex-wrap justify-center gap-x-8 gap-y-4 px-4 py-5 text-center sm:px-6 lg:px-8">
             {bandItems.map((item) => {
               const Icon = getHighlightIcon(item.icon);

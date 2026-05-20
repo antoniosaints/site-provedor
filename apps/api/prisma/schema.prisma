@@ -168,6 +168,7 @@ model CoverageRequest {
 model SiteSettings {
   id                         String   @id @default("main")
   siteTitle                  String   @default("MEGANET")
+  adminSidebarTitle          String   @default("MEGANET")
   seoDescription             String   @default("Internet fibra óptica rápida, estável e com atendimento próximo.")
   logoUrl                    String?
   faviconUrl                 String?
@@ -183,6 +184,8 @@ model SiteSettings {
   whatsappContractMessage    String   @default("Olá! Quero contratar um plano da MEGANET.")
   whatsappSupportMessage     String   @default("Olá! Preciso de suporte da MEGANET.")
   whatsappCoverageMessage    String   @default("Olá! Quero consultar cobertura da MEGANET.")
+  subscriberCenterUrl        String?
+  careersUrl                 String?
   animationsEnabled          Boolean  @default(true)
   externalScripts            String?
   createdAt                  DateTime @default(now())

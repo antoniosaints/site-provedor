@@ -10,7 +10,7 @@ import { AdminForm, FieldConfig } from '../../components/admin/AdminForm';
 type Props = {
   title: string;
   endpoint: string;
-  fields: FieldConfig[];
+  fields: FieldConfig[] | ((editing: any | null, creating: boolean) => FieldConfig[]);
   columns: { key: string; label: string; render?: (item: any) => React.ReactNode }[];
 };
 
@@ -19,6 +19,7 @@ export function ResourcePage({ title, endpoint, fields, columns }: Props) {
   const [editing, setEditing] = useState<any | null>(null);
   const [creating, setCreating] = useState(false);
   const queryKey = useMemo(() => ['admin-resource', endpoint], [endpoint]);
+  const activeFields = useMemo(() => typeof fields === 'function' ? fields(editing, creating) : fields, [creating, editing, fields]);
   const { data, isLoading } = useQuery({ queryKey, queryFn: () => api.get<ApiList<any>>(endpoint) });
   const save = useMutation({
     mutationFn: (values: any) => editing ? api.put(`${endpoint}/${editing.id}`, values) : api.post(endpoint, values),
@@ -46,7 +47,7 @@ export function ResourcePage({ title, endpoint, fields, columns }: Props) {
       {(creating || editing) ? (
         <div className="mt-6">
           <AdminForm
-            fields={fields}
+            fields={activeFields}
             initial={editing}
             onCancel={() => { setCreating(false); setEditing(null); }}
             onSubmit={async (values) => { await save.mutateAsync(values); }}

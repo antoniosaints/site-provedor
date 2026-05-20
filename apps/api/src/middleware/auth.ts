@@ -9,6 +9,13 @@ type JwtPayload = {
   email: string;
 };
 
+type AuthUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+};
+
 export function signAdminToken(user: { id: string; email: string }) {
   return jwt.sign({ sub: user.id, email: user.email }, env.JWT_SECRET, {
     expiresIn: env.JWT_EXPIRES_IN as never
@@ -32,4 +39,15 @@ export async function requireAuth(req: Request, _res: Response, next: NextFuncti
   } catch (error) {
     next(error instanceof HttpError ? error : new HttpError(401, 'Sessão inválida.'));
   }
+}
+
+export function requireRoles(roles: string[]) {
+  return (req: Request, _res: Response, next: NextFunction) => {
+    const user = (req as Request & { user?: AuthUser }).user;
+    if (!user || !roles.includes(user.role)) {
+      next(new HttpError(403, 'Você não tem permissão para acessar esta área.'));
+      return;
+    }
+    next();
+  };
 }

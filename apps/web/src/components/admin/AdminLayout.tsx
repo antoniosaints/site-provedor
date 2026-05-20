@@ -1,28 +1,42 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { BarChart3, FileText, Home, Image, LayoutDashboard, LogOut, MessageSquare, PackagePlus, Settings, Sparkles, Star, Users, Wifi } from 'lucide-react';
-import { useQueryClient } from '@tanstack/react-query';
+import { BarChart3, FileText, Home, Image, LayoutDashboard, LogOut, MessageSquare, PackagePlus, Settings, Sparkles, Star, UserCog, Users, Wifi } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
+import { adminOnlyRoles, allAdminRoles, hasAdminRole, managerAdminRoles } from '../../lib/admin-permissions';
 import { Logo } from '../public/Logo';
 
 const links = [
-  { to: '/admin', label: 'Dashboard', Icon: LayoutDashboard },
-  { to: '/admin/carrossel', label: 'Carrossel', Icon: Image },
-  { to: '/admin/destaques', label: 'Destaques', Icon: Sparkles },
-  { to: '/admin/complementos', label: 'Complementos', Icon: PackagePlus },
-  { to: '/admin/planos', label: 'Planos', Icon: Wifi },
-  { to: '/admin/blog/posts', label: 'Posts', Icon: FileText },
-  { to: '/admin/blog/categorias', label: 'Categorias', Icon: BarChart3 },
-  { to: '/admin/depoimentos', label: 'Depoimentos', Icon: Star },
-  { to: '/admin/contatos', label: 'Contatos', Icon: MessageSquare },
-  { to: '/admin/cobertura', label: 'Cobertura', Icon: Home },
-  { to: '/admin/sobre', label: 'Sobre', Icon: Users },
-  { to: '/admin/redes-sociais', label: 'Redes sociais', Icon: Users },
-  { to: '/admin/configuracoes', label: 'Configurações', Icon: Settings }
+  { to: '/admin', label: 'Dashboard', Icon: LayoutDashboard, roles: allAdminRoles },
+  { to: '/admin/carrossel', label: 'Carrossel', Icon: Image, roles: managerAdminRoles },
+  { to: '/admin/destaques', label: 'Destaques', Icon: Sparkles, roles: managerAdminRoles },
+  { to: '/admin/complementos', label: 'Complementos', Icon: PackagePlus, roles: managerAdminRoles },
+  { to: '/admin/planos', label: 'Planos', Icon: Wifi, roles: managerAdminRoles },
+  { to: '/admin/blog/posts', label: 'Posts', Icon: FileText, roles: managerAdminRoles },
+  { to: '/admin/blog/categorias', label: 'Categorias', Icon: BarChart3, roles: managerAdminRoles },
+  { to: '/admin/depoimentos', label: 'Depoimentos', Icon: Star, roles: managerAdminRoles },
+  { to: '/admin/contatos', label: 'Contatos', Icon: MessageSquare, roles: allAdminRoles },
+  { to: '/admin/cobertura', label: 'Cobertura', Icon: Home, roles: allAdminRoles },
+  { to: '/admin/sobre', label: 'Sobre', Icon: Users, roles: managerAdminRoles },
+  { to: '/admin/redes-sociais', label: 'Redes sociais', Icon: Users, roles: managerAdminRoles },
+  { to: '/admin/usuarios', label: 'Usuários', Icon: UserCog, roles: adminOnlyRoles },
+  { to: '/admin/configuracoes', label: 'Configurações', Icon: Settings, roles: adminOnlyRoles }
 ];
 
 export function AdminLayout() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { data: me } = useQuery({
+    queryKey: ['me'],
+    queryFn: () => api.get<{ user: { role: string } }>('/api/auth/me'),
+    retry: false
+  });
+  const { data: publicSettings } = useQuery({
+    queryKey: ['public-settings'],
+    queryFn: () => api.get<{ settings?: any }>('/api/public/settings')
+  });
+  const role = me?.user?.role;
+  const visibleLinks = links.filter((link) => hasAdminRole(role, link.roles));
+  const adminName = publicSettings?.settings?.adminSidebarTitle || publicSettings?.settings?.siteTitle || 'MEGANET';
 
   async function logout() {
     await api.post('/api/auth/logout');
@@ -33,9 +47,9 @@ export function AdminLayout() {
   return (
     <div className="min-h-screen bg-slate-100 lg:grid lg:grid-cols-[280px_1fr]">
       <aside className="border-r border-slate-200 bg-white p-4 lg:min-h-screen">
-        <div className="mb-6"><Logo compact /></div>
+        <div className="mb-6"><Logo compact logoUrl={publicSettings?.settings?.logoUrl} name={adminName} /></div>
         <nav className="grid gap-1">
-          {links.map(({ to, label, Icon }) => (
+          {visibleLinks.map(({ to, label, Icon }) => (
             <NavLink
               key={to}
               to={to}

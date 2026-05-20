@@ -1,7 +1,9 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { PublicLayout } from './components/public/PublicLayout';
 import { ProtectedRoute } from './components/admin/ProtectedRoute';
+import { RoleGuard } from './components/admin/RoleGuard';
 import { AdminLayout } from './components/admin/AdminLayout';
+import { adminOnlyRoles, managerAdminRoles } from './lib/admin-permissions';
 import { HomePage } from './pages/public/HomePage';
 import { PlansPage } from './pages/public/PlansPage';
 import { BlogPage } from './pages/public/BlogPage';
@@ -22,7 +24,8 @@ import {
   PostsAdminPage,
   SettingsAdminPage,
   SocialLinksAdminPage,
-  TestimonialsAdminPage
+  TestimonialsAdminPage,
+  UsersAdminPage
 } from './pages/admin/AdminRoutePages';
 
 const router = createBrowserRouter([
@@ -47,19 +50,20 @@ const router = createBrowserRouter([
         element: <AdminLayout />,
         children: [
           { index: true, element: <DashboardPage /> },
-          { path: 'carrossel', element: <BannersAdminPage /> },
-          { path: 'banners', element: <BannersAdminPage /> },
-          { path: 'destaques', element: <HighlightsAdminPage /> },
-          { path: 'complementos', element: <ComplementsAdminPage /> },
-          { path: 'planos', element: <PlansAdminPage /> },
-          { path: 'blog/posts', element: <PostsAdminPage /> },
-          { path: 'blog/categorias', element: <CategoriesAdminPage /> },
-          { path: 'depoimentos', element: <TestimonialsAdminPage /> },
+          { path: 'carrossel', element: <RoleGuard roles={managerAdminRoles}><BannersAdminPage /></RoleGuard> },
+          { path: 'banners', element: <RoleGuard roles={managerAdminRoles}><BannersAdminPage /></RoleGuard> },
+          { path: 'destaques', element: <RoleGuard roles={managerAdminRoles}><HighlightsAdminPage /></RoleGuard> },
+          { path: 'complementos', element: <RoleGuard roles={managerAdminRoles}><ComplementsAdminPage /></RoleGuard> },
+          { path: 'planos', element: <RoleGuard roles={managerAdminRoles}><PlansAdminPage /></RoleGuard> },
+          { path: 'blog/posts', element: <RoleGuard roles={managerAdminRoles}><PostsAdminPage /></RoleGuard> },
+          { path: 'blog/categorias', element: <RoleGuard roles={managerAdminRoles}><CategoriesAdminPage /></RoleGuard> },
+          { path: 'depoimentos', element: <RoleGuard roles={managerAdminRoles}><TestimonialsAdminPage /></RoleGuard> },
           { path: 'contatos', element: <MessagesPage title="Mensagens de contato" endpoint="/api/admin/contact-messages" type="contact" /> },
           { path: 'cobertura', element: <MessagesPage title="Solicitações de cobertura" endpoint="/api/admin/coverage-requests" type="coverage" /> },
-          { path: 'configuracoes', element: <SettingsAdminPage /> },
-          { path: 'sobre', element: <AboutAdminPage /> },
-          { path: 'redes-sociais', element: <SocialLinksAdminPage /> }
+          { path: 'usuarios', element: <RoleGuard roles={adminOnlyRoles}><UsersAdminPage /></RoleGuard> },
+          { path: 'configuracoes', element: <RoleGuard roles={adminOnlyRoles}><SettingsAdminPage /></RoleGuard> },
+          { path: 'sobre', element: <RoleGuard roles={managerAdminRoles}><AboutAdminPage /></RoleGuard> },
+          { path: 'redes-sociais', element: <RoleGuard roles={managerAdminRoles}><SocialLinksAdminPage /></RoleGuard> }
         ]
       }
     ]

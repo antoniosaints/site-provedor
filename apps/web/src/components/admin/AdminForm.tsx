@@ -7,7 +7,7 @@ import { RichTextEditor } from '../ui/RichTextEditor';
 export type FieldConfig = {
   name: string;
   label: string;
-  type?: 'text' | 'number' | 'textarea' | 'select' | 'multi-select' | 'boolean' | 'image' | 'array' | 'richtext' | 'color';
+  type?: 'text' | 'number' | 'textarea' | 'select' | 'multi-select' | 'boolean' | 'image' | 'array' | 'richtext' | 'color' | 'password';
   options?: { label: string; value: string }[];
   required?: boolean;
 };
@@ -152,7 +152,7 @@ export function AdminForm({ fields, initial, onSubmit, onCancel }: { fields: Fie
           }
           return (
             <FieldWrap key={field.name} label={field.label}>
-              <Input type={field.type === 'number' ? 'number' : field.type === 'color' ? 'color' : 'text'} required={field.required} value={values[field.name] ?? ''} onChange={(e) => setValues((current) => ({ ...current, [field.name]: e.target.value }))} />
+              <Input type={field.type === 'number' ? 'number' : field.type === 'color' ? 'color' : field.type === 'password' ? 'password' : 'text'} required={field.required} value={values[field.name] ?? ''} onChange={(e) => setValues((current) => ({ ...current, [field.name]: e.target.value }))} />
             </FieldWrap>
           );
         })}

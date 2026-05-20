@@ -150,6 +150,7 @@ CREATE TABLE "CoverageRequest" (
 CREATE TABLE "SiteSettings" (
     "id" TEXT NOT NULL PRIMARY KEY DEFAULT 'main',
     "siteTitle" TEXT NOT NULL DEFAULT 'MEGANET',
+    "adminSidebarTitle" TEXT NOT NULL DEFAULT 'MEGANET',
     "seoDescription" TEXT NOT NULL DEFAULT 'Internet fibra óptica rápida, estável e com atendimento próximo.',
     "logoUrl" TEXT,
     "faviconUrl" TEXT,
@@ -165,6 +166,8 @@ CREATE TABLE "SiteSettings" (
     "whatsappContractMessage" TEXT NOT NULL DEFAULT 'Olá! Quero contratar um plano da MEGANET.',
     "whatsappSupportMessage" TEXT NOT NULL DEFAULT 'Olá! Preciso de suporte da MEGANET.',
     "whatsappCoverageMessage" TEXT NOT NULL DEFAULT 'Olá! Quero consultar cobertura da MEGANET.',
+    "subscriberCenterUrl" TEXT,
+    "careersUrl" TEXT,
     "animationsEnabled" BOOLEAN NOT NULL DEFAULT true,
     "externalScripts" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

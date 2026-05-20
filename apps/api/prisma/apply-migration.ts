@@ -105,12 +105,19 @@ async function main() {
       ['headerTextColor', "'#102133'"],
       ['footerBackgroundColor', "'#ffffff'"],
       ['footerTextColor', "'#102133'"],
+      ['adminSidebarTitle', "'MEGANET'"],
       ['carouselFeatureBandItems', "'[\"Mega Fibra\",\"Suporte Total\",\"Ponto Gamer\",\"Wi-Fi 6\",\"Wi-Fi Plus\",\"Empresas\",\"Super Upload\"]'"]
     ] as const;
 
     for (const [column, defaultValue] of siteSettingColumns) {
       if (!(await columnExists('SiteSettings', column))) {
         await prisma.$executeRawUnsafe(`ALTER TABLE "SiteSettings" ADD COLUMN "${column}" TEXT NOT NULL DEFAULT ${defaultValue}`);
+        console.log(`Added SiteSettings.${column}.`);
+      }
+    }
+    for (const column of ['subscriberCenterUrl', 'careersUrl'] as const) {
+      if (!(await columnExists('SiteSettings', column))) {
+        await prisma.$executeRawUnsafe(`ALTER TABLE "SiteSettings" ADD COLUMN "${column}" TEXT`);
         console.log(`Added SiteSettings.${column}.`);
       }
     }

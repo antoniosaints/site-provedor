@@ -31,6 +31,8 @@ export function PublicLayout() {
   const settings = data?.settings;
   const company = data?.company;
   const companyName = company?.companyName ?? settings?.siteTitle ?? 'MEGANET';
+  const subscriberCenterUrl = String(settings?.subscriberCenterUrl ?? '').trim();
+  const careersUrl = String(settings?.careersUrl ?? '').trim();
   const headerStyle = {
     backgroundColor: settings?.headerBackgroundColor ?? '#ffffff',
     color: settings?.headerTextColor ?? '#102133'
@@ -47,25 +49,29 @@ export function PublicLayout() {
           <Link to="/" aria-label={`${companyName} home`}>
             <Logo logoUrl={settings?.logoUrl} name={companyName} textColor={settings?.headerTextColor} />
           </Link>
-          <nav className="hidden items-center gap-7 lg:flex">
+          <nav className="hidden items-center gap-6 xl:flex">
             {nav.map(([to, label]) => (
               <NavLink key={to} to={to} className={({ isActive }) => `text-sm font-bold ${isActive ? 'opacity-100' : 'opacity-75 hover:opacity-100'}`}>
                 {label}
               </NavLink>
             ))}
           </nav>
-          <div className="hidden items-center gap-3 lg:flex">
-            <ButtonLink href="/planos" variant="secondary">Ver planos</ButtonLink>
+          <div className="hidden flex-wrap items-center justify-end gap-2 xl:flex">
+            {subscriberCenterUrl ? <ButtonLink href={subscriberCenterUrl} target="_blank" rel="noreferrer" variant="secondary" className="h-10 px-3">Central do assinante</ButtonLink> : null}
+            {careersUrl ? <ButtonLink href={careersUrl} target="_blank" rel="noreferrer" variant="secondary" className="h-10 px-3">Trabalhe conosco</ButtonLink> : null}
+            <ButtonLink href="/planos" variant="secondary" className="h-10 px-3">{settings?.ctaPlansText ?? 'Ver planos'}</ButtonLink>
             <ButtonLink href={whatsappLink(company?.whatsapp, settings?.whatsappContractMessage)} target="_blank" rel="noreferrer">WhatsApp</ButtonLink>
           </div>
-          <button className="grid h-10 w-10 place-items-center rounded-lg border border-current/20 lg:hidden" onClick={() => setOpen(!open)} aria-label="Abrir menu">
+          <button className="grid h-10 w-10 place-items-center rounded-lg border border-current/20 xl:hidden" onClick={() => setOpen(!open)} aria-label="Abrir menu">
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
         {open ? (
-          <div className="border-t border-white/15 px-4 py-4 lg:hidden" style={headerStyle}>
+          <div className="border-t border-white/15 px-4 py-4 xl:hidden" style={headerStyle}>
             <div className="grid gap-3">
               {nav.map(([to, label]) => <Link key={to} to={to} onClick={() => setOpen(false)} className="font-bold opacity-85">{label}</Link>)}
+              {subscriberCenterUrl ? <ButtonLink href={subscriberCenterUrl} target="_blank" rel="noreferrer" variant="secondary">Central do assinante</ButtonLink> : null}
+              {careersUrl ? <ButtonLink href={careersUrl} target="_blank" rel="noreferrer" variant="secondary">Trabalhe conosco</ButtonLink> : null}
               <ButtonLink href={whatsappLink(company?.whatsapp, settings?.whatsappContractMessage)} target="_blank" rel="noreferrer">Falar no WhatsApp</ButtonLink>
             </div>
           </div>
@@ -85,6 +91,8 @@ export function PublicLayout() {
             <div className="mt-4 grid gap-2 text-sm font-semibold opacity-75">
               {nav.map(([to, label]) => <Link key={to} to={to} className="hover:opacity-100">{label}</Link>)}
               <Link to="/cobertura" className="hover:opacity-100">Consultar cobertura</Link>
+              {subscriberCenterUrl ? <a href={subscriberCenterUrl} target="_blank" rel="noreferrer" className="hover:opacity-100">Central do assinante</a> : null}
+              {careersUrl ? <a href={careersUrl} target="_blank" rel="noreferrer" className="hover:opacity-100">Trabalhe conosco</a> : null}
             </div>
           </div>
           <div>

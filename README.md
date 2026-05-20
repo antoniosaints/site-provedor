@@ -88,6 +88,10 @@ apps/
 ## Observações de produção
 
 - Troque `JWT_SECRET`.
-- Configure `WEB_ORIGIN` com o domínio real.
+- Configure `WEB_ORIGIN` na API com o domínio real do frontend. Se usar com e sem `www`, informe ambos separados por vírgula: `https://meganetma.com.br,https://www.meganetma.com.br`.
+- Configure `VITE_API_URL` no frontend antes de rodar `npm run build -w apps/web`. O proxy do Vite só existe em desenvolvimento e não é aplicado no build hospedado.
+- Se frontend e API ficarem em domínios diferentes, use `AUTH_COOKIE_SAME_SITE=none` e `AUTH_COOKIE_SECURE=true` na API. O cookie de admin precisa dessas opções para ser enviado em requisições `fetch` com `credentials: 'include'`.
+- Se o deploy servir `/api` e `/uploads` pelo mesmo domínio do frontend via proxy/rewrite, `VITE_API_URL` pode ficar vazio e o cookie pode usar `AUTH_COOKIE_SAME_SITE=lax`.
+- Configure o servidor do frontend para reescrever rotas SPA para `index.html`; sem isso, acessar `/admin` diretamente pode parar no servidor antes de o React redirecionar para `/admin/login`.
 - Migre SQLite para PostgreSQL alterando o `provider` e `DATABASE_URL` no Prisma.
 - Use storage externo para uploads se o deploy for serverless ou com múltiplas instâncias.

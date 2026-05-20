@@ -1,4 +1,6 @@
-export const API_BASE = import.meta.env.VITE_API_URL ?? '';
+const rawApiBase = import.meta.env.VITE_API_URL?.trim() ?? '';
+
+export const API_BASE = rawApiBase.replace(/\/+$/, '');
 
 export type ApiList<T> = {
   data: T[];
@@ -20,6 +22,12 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   }
 
   if (response.status === 204) return undefined as T;
+
+  const contentType = response.headers.get('content-type') ?? '';
+  if (!contentType.includes('application/json')) {
+    throw new Error('Resposta invalida da API. Verifique a URL configurada para o backend.');
+  }
+
   return response.json() as Promise<T>;
 }
 

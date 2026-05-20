@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import path from 'node:path';
-import { env } from './config/env.js';
+import { env, webOrigins } from './config/env.js';
 import authRoutes from './routes/auth.js';
 import publicRoutes from './routes/public.js';
 import adminRoutes from './routes/admin.js';
@@ -15,7 +15,17 @@ export const app = express();
 app.set('trust proxy', 1);
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(cors({ origin: env.WEB_ORIGIN, credentials: true }));
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || webOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(null, false);
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

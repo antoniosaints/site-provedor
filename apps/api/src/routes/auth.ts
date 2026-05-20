@@ -1,13 +1,29 @@
 import { Router } from 'express';
+import type { CookieOptions } from 'express';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '../config/prisma.js';
-import { env } from '../config/env.js';
+import { authCookieSameSite, authCookieSecure } from '../config/env.js';
 import { requireAuth, signAdminToken } from '../middleware/auth.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { HttpError } from '../utils/http-error.js';
 
 const router = Router();
+
+const adminCookieOptions: CookieOptions = {
+  httpOnly: true,
+  sameSite: authCookieSameSite,
+  secure: authCookieSecure,
+  path: '/',
+  maxAge: 7 * 24 * 60 * 60 * 1000
+};
+
+const clearAdminCookieOptions: CookieOptions = {
+  httpOnly: adminCookieOptions.httpOnly,
+  sameSite: adminCookieOptions.sameSite,
+  secure: adminCookieOptions.secure,
+  path: adminCookieOptions.path
+};
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -23,18 +39,13 @@ router.post('/login', asyncHandler(async (req, res) => {
   }
 
   const token = signAdminToken(user);
-  res.cookie('admin_token', token, {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: env.NODE_ENV === 'production',
-    maxAge: 7 * 24 * 60 * 60 * 1000
-  });
+  res.cookie('admin_token', token, adminCookieOptions);
 
   res.json({ user: { id: user.id, name: user.name, email: user.email, role: user.role } });
 }));
 
 router.post('/logout', (_req, res) => {
-  res.clearCookie('admin_token');
+  res.clearCookie('admin_token', clearAdminCookieOptions);
   res.json({ ok: true });
 });
 

@@ -8,7 +8,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     allowedHosts: [
-      '.meganetma.com.br',
+      'meganetma.com.br',
       'www.meganetma.com.br'
     ],
     proxy: {
@@ -29,7 +29,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     allowedHosts: [
-      '.meganetma.com.br',
+      'meganetma.com.br',
       'www.meganetma.com.br'
     ]
   }

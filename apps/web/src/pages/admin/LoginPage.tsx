@@ -25,7 +25,7 @@ type AuthSession = {
 export function LoginPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { register, handleSubmit } = useForm({ defaultValues: { email: 'admin@meganet.com.br', password: 'admin123' } });
+  const { register, handleSubmit } = useForm({ defaultValues: { email: '', password: '' } });
   const mutation = useMutation({
     mutationFn: async (values: LoginValues) => {
       await api.post('/api/auth/login', values);

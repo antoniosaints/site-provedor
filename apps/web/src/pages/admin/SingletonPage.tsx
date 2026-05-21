@@ -14,7 +14,12 @@ export function SingletonPage({ title, endpoint, fields }: { title: string; endp
   const { data, isLoading } = useQuery({ queryKey: ['singleton', endpoint], queryFn: () => api.get<any>(endpoint) });
   const save = useMutation({
     mutationFn: (values: any) => api.put(endpoint, values),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['singleton', endpoint] })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['singleton', endpoint] });
+      if (endpoint === '/api/admin/settings') {
+        await queryClient.invalidateQueries({ queryKey: ['public-settings'] });
+      }
+    }
   });
 
   return (

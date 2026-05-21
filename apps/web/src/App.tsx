@@ -3,6 +3,7 @@ import { PublicLayout } from './components/public/PublicLayout';
 import { ProtectedRoute } from './components/admin/ProtectedRoute';
 import { RoleGuard } from './components/admin/RoleGuard';
 import { AdminLayout } from './components/admin/AdminLayout';
+import { SiteHead } from './components/public/SiteHead';
 import { adminOnlyRoles, managerAdminRoles } from './lib/admin-permissions';
 import { HomePage } from './pages/public/HomePage';
 import { PlansPage } from './pages/public/PlansPage';
@@ -71,5 +72,10 @@ const router = createBrowserRouter([
 ]);
 
 export function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <SiteHead />
+      <RouterProvider router={router} />
+    </>
+  );
 }

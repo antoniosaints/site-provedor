@@ -66,7 +66,7 @@ const coverageSchema = z.object({
 });
 
 router.get('/home', asyncHandler(async (_req, res) => {
-  const [settings, company, missionVisionValues, banners, plans, planComplements, featureHighlights, testimonials, posts, socialLinks] = await Promise.all([
+  const [settings, company, missionVisionValues, banners, plans, planComplements, featureHighlights, testimonials, posts, socialLinks, coverageLocations] = await Promise.all([
     prisma.siteSettings.findUnique({ where: { id: 'main' } }),
     prisma.companyInfo.findUnique({ where: { id: 'main' } }),
     prisma.missionVisionValues.findUnique({ where: { id: 'main' } }),
@@ -85,7 +85,8 @@ router.get('/home', asyncHandler(async (_req, res) => {
       orderBy: { publishedAt: 'desc' },
       take: 3
     }),
-    prisma.socialLink.findMany({ where: { active: true }, orderBy: { sortOrder: 'asc' } })
+    prisma.socialLink.findMany({ where: { active: true }, orderBy: { sortOrder: 'asc' } }),
+    prisma.coverageLocation.findMany({ where: { active: true }, orderBy: { sortOrder: 'asc' } })
   ]);
   const complementsById = new Map<string, PlanComplementView>(planComplements.map((item) => [item.id, {
     id: item.id,
@@ -104,7 +105,8 @@ router.get('/home', asyncHandler(async (_req, res) => {
     featureHighlights,
     testimonials,
     posts,
-    socialLinks
+    socialLinks,
+    coverageLocations: settings?.coverageMapEnabled ? coverageLocations : []
   });
 }));
 
@@ -174,6 +176,19 @@ router.get('/settings', asyncHandler(async (_req, res) => {
     prisma.socialLink.findMany({ where: { active: true }, orderBy: { sortOrder: 'asc' } })
   ]);
   res.json({ settings: normalizeSettings(settings), company: normalizeCompany(company), socialLinks });
+}));
+
+router.get('/coverage-locations', asyncHandler(async (_req, res) => {
+  const [settings, company, coverageLocations] = await Promise.all([
+    prisma.siteSettings.findUnique({ where: { id: 'main' } }),
+    prisma.companyInfo.findUnique({ where: { id: 'main' } }),
+    prisma.coverageLocation.findMany({ where: { active: true }, orderBy: { sortOrder: 'asc' } })
+  ]);
+  res.json({
+    settings: normalizeSettings(settings),
+    company: normalizeCompany(company),
+    data: settings?.coverageMapEnabled ? coverageLocations : []
+  });
 }));
 
 router.post('/contact', asyncHandler(async (req, res) => {

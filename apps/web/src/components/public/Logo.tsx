@@ -13,7 +13,7 @@ export function Logo({
   textColor?: string;
 }) {
   if (logoUrl) {
-    return <img src={assetUrl(logoUrl)} alt={name} className={compact ? 'h-9' : 'h-16'} />;
+    return <img src={assetUrl(logoUrl)} alt={name} className={compact ? 'h-9' : 'h-[4.5rem]'} />;
   }
 
   return (

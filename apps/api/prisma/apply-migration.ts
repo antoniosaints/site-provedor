@@ -63,6 +63,26 @@ async function ensurePlanComplementTable() {
   }
 }
 
+async function ensureCoverageLocationTable() {
+  if (!(await tableExists('CoverageLocation'))) {
+    await prisma.$executeRawUnsafe(`
+      CREATE TABLE "CoverageLocation" (
+        "id" TEXT NOT NULL PRIMARY KEY,
+        "name" TEXT NOT NULL,
+        "address" TEXT NOT NULL,
+        "latitude" REAL NOT NULL,
+        "longitude" REAL NOT NULL,
+        "markerIconUrl" TEXT,
+        "active" BOOLEAN NOT NULL DEFAULT true,
+        "sortOrder" INTEGER NOT NULL DEFAULT 0,
+        "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" DATETIME NOT NULL
+      )
+    `);
+    console.log('Created CoverageLocation table.');
+  }
+}
+
 async function seedFeatureHighlightsFromSettings() {
   const count = await prisma.featureHighlight.count();
   if (count > 0) return;
@@ -100,6 +120,10 @@ async function main() {
       await prisma.$executeRawUnsafe('ALTER TABLE "Banner" ADD COLUMN "backgroundColor" TEXT NOT NULL DEFAULT \'#0877c8\'');
       console.log('Added Banner.backgroundColor.');
     }
+    if (!(await columnExists('Banner', 'textColor'))) {
+      await prisma.$executeRawUnsafe('ALTER TABLE "Banner" ADD COLUMN "textColor" TEXT NOT NULL DEFAULT \'#ffffff\'');
+      console.log('Added Banner.textColor.');
+    }
     if (!(await columnExists('InternetPlan', 'complementIds'))) {
       await prisma.$executeRawUnsafe('ALTER TABLE "InternetPlan" ADD COLUMN "complementIds" TEXT NOT NULL DEFAULT \'[]\'');
       console.log('Added InternetPlan.complementIds.');
@@ -127,8 +151,17 @@ async function main() {
         console.log(`Added SiteSettings.${column}.`);
       }
     }
+    if (!(await columnExists('SiteSettings', 'coverageMapEnabled'))) {
+      await prisma.$executeRawUnsafe('ALTER TABLE "SiteSettings" ADD COLUMN "coverageMapEnabled" BOOLEAN NOT NULL DEFAULT false');
+      console.log('Added SiteSettings.coverageMapEnabled.');
+    }
     await ensureFeatureHighlightTable();
     await ensurePlanComplementTable();
+    await ensureCoverageLocationTable();
+    if (!(await columnExists('CoverageLocation', 'markerIconUrl'))) {
+      await prisma.$executeRawUnsafe('ALTER TABLE "CoverageLocation" ADD COLUMN "markerIconUrl" TEXT');
+      console.log('Added CoverageLocation.markerIconUrl.');
+    }
     await seedFeatureHighlightsFromSettings();
     console.log('Database already has the initial schema. Skipping migration.');
     return;

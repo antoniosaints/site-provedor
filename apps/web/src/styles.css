@@ -121,6 +121,58 @@ img {
   outline-offset: -1px;
 }
 
+.coverage-map-marker {
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 2px solid #0ea5e9;
+  box-shadow: 0 12px 28px rgba(16, 33, 51, 0.2);
+}
+
+.coverage-map-marker span {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #e6f7ff;
+  color: #0877c8;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.coverage-map-marker img {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  object-fit: contain;
+}
+
+.coverage-map-popup {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 190px;
+  color: #102133;
+  font-family: Manrope, ui-sans-serif, system-ui, sans-serif;
+}
+
+.coverage-map-popup strong {
+  color: #0877c8;
+  font-size: 0.95rem;
+}
+
+.coverage-map-popup span {
+  color: #475569;
+  line-height: 1.45;
+}
+
+.coverage-map-popup a {
+  color: #0877c8;
+  font-weight: 800;
+}
+
 @keyframes meganet-rise {
   from {
     opacity: 0;

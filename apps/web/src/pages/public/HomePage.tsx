@@ -10,6 +10,7 @@ import { PlanCard } from '../../components/public/PlanCard';
 import { Seo } from '../../components/public/Seo';
 import { HeroCarousel } from '../../components/public/HeroCarousel';
 import { TestimonialsSection } from '../../components/public/TestimonialsSection';
+import { CoverageMapSection } from '../../components/public/CoverageMapSection';
 import { HubHomeTemplate, OrbitHomeTemplate } from '../../components/public/HomeTemplates';
 
 export function HomePage() {
@@ -28,7 +29,7 @@ export function HomePage() {
   return (
     <main>
       <Seo title={`${settings?.siteTitle ?? companyName} | Internet fibra optica`} description={settings?.seoDescription} />
-      <HeroCarousel banners={data?.banners} companyName={companyName} featureBandItems={data?.featureHighlights ?? settings?.carouselFeatureBandItems} />
+      <HeroCarousel banners={data?.banners} companyName={companyName} featureBandItems={data?.featureHighlights ?? settings?.carouselFeatureBandItems} primaryColor={settings?.primaryColor} />
 
       <section className="motion-reveal mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
@@ -43,6 +44,7 @@ export function HomePage() {
         </div>
       </section>
 
+      <CoverageMapSection locations={data?.coverageLocations} companyName={companyName} />
       <section className="bg-white py-16">
         <div className="motion-stagger mx-auto grid max-w-7xl gap-5 px-4 sm:px-6 md:grid-cols-4 lg:px-8">
           {[

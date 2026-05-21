@@ -36,11 +36,16 @@ const updateUserSchema = z.object({
   role: z.enum(roles).optional()
 });
 
+const coverageMapSchema = z.object({
+  coverageMapEnabled: z.boolean()
+});
+
 const delegates = {
   banners: prisma.banner,
   plans: prisma.internetPlan,
   featureHighlights: prisma.featureHighlight,
   planComplements: prisma.planComplement,
+  coverageLocations: prisma.coverageLocation,
   categories: prisma.blogCategory,
   posts: prisma.blogPost,
   testimonials: prisma.testimonial,
@@ -59,7 +64,7 @@ async function listCrud(req: any, res: any, name: DelegateName, searchFields: st
     ? { OR: searchFields.map((field) => ({ [field]: { contains: query.search } })) }
     : {};
   const delegate = getDelegate(name);
-  const orderBy = ['banners', 'plans', 'featureHighlights', 'planComplements', 'testimonials', 'socialLinks'].includes(name)
+  const orderBy = ['banners', 'plans', 'featureHighlights', 'planComplements', 'coverageLocations', 'testimonials', 'socialLinks'].includes(name)
     ? { sortOrder: 'asc' }
     : { createdAt: 'desc' };
   const [data, total] = await Promise.all([
@@ -84,6 +89,11 @@ async function preparePayload(model: DelegateName, body: any, id?: string) {
   if (model === 'banners' && !payload.carouselType) payload.carouselType = 'content';
   if (model === 'featureHighlights' && !payload.icon) payload.icon = 'Gauge';
   if (model === 'planComplements' && !payload.category) payload.category = 'app';
+  if (model === 'coverageLocations') {
+    payload.latitude = Number(payload.latitude);
+    payload.longitude = Number(payload.longitude);
+    payload.markerIconUrl = String(payload.markerIconUrl ?? '').trim() || null;
+  }
   if (payload.price !== undefined && payload.priceCents === undefined) {
     payload.priceCents = Math.round(Number(payload.price) * 100);
     delete payload.price;
@@ -191,6 +201,7 @@ router.get('/banners', managerOnly, asyncHandler((req, res) => listCrud(req, res
 router.get('/plans', managerOnly, asyncHandler((req, res) => listCrud(req, res, 'plans', ['name', 'description'])));
 router.get('/highlights', managerOnly, asyncHandler((req, res) => listCrud(req, res, 'featureHighlights', ['title', 'icon'])));
 router.get('/plan-complements', managerOnly, asyncHandler((req, res) => listCrud(req, res, 'planComplements', ['name', 'category'])));
+router.get('/coverage-locations', managerOnly, asyncHandler((req, res) => listCrud(req, res, 'coverageLocations', ['name', 'address'])));
 router.get('/blog/categories', managerOnly, asyncHandler((req, res) => listCrud(req, res, 'categories', ['name', 'description'])));
 router.get('/blog/posts', managerOnly, asyncHandler(async (req, res) => {
   const query = listQuerySchema.parse(req.query);
@@ -299,6 +310,7 @@ const crudMap: Record<string, DelegateName> = {
   plans: 'plans',
   highlights: 'featureHighlights',
   'plan-complements': 'planComplements',
+  'coverage-locations': 'coverageLocations',
   'blog/categories': 'categories',
   'blog/posts': 'posts',
   testimonials: 'testimonials',
@@ -332,6 +344,21 @@ for (const [path, model] of Object.entries(crudMap)) {
     res.status(204).send();
   }));
 }
+
+router.get('/coverage-map', managerOnly, asyncHandler(async (_req, res) => {
+  const settings = await prisma.siteSettings.upsert({ where: { id: 'main' }, update: {}, create: {} });
+  res.json({ data: { coverageMapEnabled: settings.coverageMapEnabled } });
+}));
+
+router.put('/coverage-map', managerOnly, asyncHandler(async (req, res) => {
+  const payload = coverageMapSchema.parse(req.body);
+  const settings = await prisma.siteSettings.upsert({
+    where: { id: 'main' },
+    update: payload,
+    create: { ...payload, id: 'main' }
+  });
+  res.json({ data: { coverageMapEnabled: settings.coverageMapEnabled } });
+}));
 
 router.get('/settings', adminOnly, asyncHandler(async (_req, res) => {
   const data = await prisma.siteSettings.upsert({ where: { id: 'main' }, update: {}, create: {} });

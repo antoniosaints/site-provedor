@@ -85,7 +85,7 @@ export function PublicLayout() {
   return (
     <div className={`${settings?.animationsEnabled === false ? 'motion-disabled' : 'motion-enabled'} min-h-screen bg-[#f6faff] text-ink`}>
       <header className="sticky top-0 z-40 border-b border-white/15 backdrop-blur" style={headerStyle}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-1 sm:px-6 lg:px-8">
           <Link to="/" aria-label={`${companyName} home`}>
             <Logo logoUrl={settings?.logoUrl} name={companyName} textColor={settings?.headerTextColor} />
           </Link>

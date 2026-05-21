@@ -23,17 +23,26 @@ export function ResourcePage({ title, endpoint, fields, columns }: Props) {
   const formOpen = creating || Boolean(editing);
   const activeFields = useMemo(() => typeof fields === 'function' ? fields(editing, creating) : fields, [creating, editing, fields]);
   const { data, isLoading } = useQuery({ queryKey, queryFn: () => api.get<ApiList<any>>(endpoint) });
+  const invalidateAfterChange = async () => {
+    await queryClient.invalidateQueries({ queryKey });
+    if (endpoint === '/api/admin/coverage-locations') {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['home'] }),
+        queryClient.invalidateQueries({ queryKey: ['coverage-locations'] })
+      ]);
+    }
+  };
   const save = useMutation({
     mutationFn: (values: any) => editing ? api.put(`${endpoint}/${editing.id}`, values) : api.post(endpoint, values),
     onSuccess: async () => {
       setEditing(null);
       setCreating(false);
-      await queryClient.invalidateQueries({ queryKey });
+      await invalidateAfterChange();
     }
   });
   const remove = useMutation({
     mutationFn: (id: string) => api.delete(`${endpoint}/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey })
+    onSuccess: invalidateAfterChange
   });
   const closeForm = () => {
     setCreating(false);

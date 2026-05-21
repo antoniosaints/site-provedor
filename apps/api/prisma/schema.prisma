@@ -45,6 +45,7 @@ model Banner {
   imageUrl    String?
   carouselType String  @default("content")
   backgroundColor String @default("#0877c8")
+  textColor   String   @default("#ffffff")
   highlights  String   @default("[]")
   location    String   @default("home")
   active      Boolean  @default(true)
@@ -166,6 +167,19 @@ model CoverageRequest {
   updatedAt     DateTime   @updatedAt
 }
 
+model CoverageLocation {
+  id        String   @id @default(cuid())
+  name      String
+  address   String
+  latitude  Float
+  longitude Float
+  markerIconUrl String?
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model SiteSettings {
   id                         String   @id @default("main")
   siteTitle                  String   @default("MEGANET")
@@ -190,6 +204,7 @@ model SiteSettings {
   whatsappCoverageMessage    String   @default("Olá! Quero consultar cobertura da MEGANET.")
   subscriberCenterUrl        String?
   careersUrl                 String?
+  coverageMapEnabled         Boolean  @default(false)
   animationsEnabled          Boolean  @default(true)
   externalScripts            String?
   createdAt                  DateTime @default(now())

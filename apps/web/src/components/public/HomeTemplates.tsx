@@ -21,6 +21,7 @@ import { assetUrl } from '../../lib/api';
 import { formatMoney, readableDate, whatsappLink } from '../../lib/format';
 import { getHighlightIcon } from '../../lib/highlight-icons';
 import { Card } from '../ui/Card';
+import { CoverageMapSection } from './CoverageMapSection';
 import { Seo } from './Seo';
 
 type HomeTemplateProps = {
@@ -312,6 +313,8 @@ export function HubHomeTemplate({ data, companyName }: HomeTemplateProps) {
         </div>
       </section>
 
+      <CoverageMapSection locations={data?.coverageLocations} companyName={companyName} />
+
       <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-5 lg:grid-cols-[0.75fr_1.25fr]">
           <div className="rounded-lg p-6 text-white" style={{ backgroundColor: theme.primary }}>
@@ -451,6 +454,8 @@ export function OrbitHomeTemplate({ data, companyName }: HomeTemplateProps) {
           })}
         </div>
       </section>
+
+      <CoverageMapSection locations={data?.coverageLocations} companyName={companyName} />
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="max-w-2xl">

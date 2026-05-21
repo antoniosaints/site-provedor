@@ -7,16 +7,19 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { FieldWrap, Input, Textarea } from '../../components/ui/Field';
 import { Seo } from '../../components/public/Seo';
+import { CoverageMapSection } from '../../components/public/CoverageMapSection';
 
 export function CoveragePage() {
   const plans = useQuery({ queryKey: ['plans', 'coverage'], queryFn: () => api.get<any>('/api/public/plans') });
   const settings = useQuery({ queryKey: ['public-settings'], queryFn: () => api.get<any>('/api/public/settings') });
+  const coverageLocations = useQuery({ queryKey: ['coverage-locations'], queryFn: () => api.get<any>('/api/public/coverage-locations') });
   const { register, handleSubmit, reset } = useForm();
   const mutation = useMutation({
     mutationFn: (values: any) => api.post('/api/public/coverage', values),
     onSuccess: () => reset()
   });
   const siteSettings = settings.data?.settings;
+  const companyName = settings.data?.company?.companyName ?? siteSettings?.siteTitle ?? 'MEGANET';
   const theme = themeFromSettings(siteSettings);
   const template = getSiteTemplate(siteSettings);
   const dark = isDarkTemplate(template);
@@ -58,6 +61,7 @@ export function CoveragePage() {
           </Card>
         </div>
       </section>
+      <CoverageMapSection locations={coverageLocations.data?.data} companyName={companyName} />
     </main>
   );
 }

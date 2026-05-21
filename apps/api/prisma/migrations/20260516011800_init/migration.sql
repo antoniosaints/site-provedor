@@ -19,6 +19,7 @@ CREATE TABLE "Banner" (
     "imageUrl" TEXT,
     "carouselType" TEXT NOT NULL DEFAULT 'content',
     "backgroundColor" TEXT NOT NULL DEFAULT '#0877c8',
+    "textColor" TEXT NOT NULL DEFAULT '#ffffff',
     "highlights" TEXT NOT NULL DEFAULT '[]',
     "location" TEXT NOT NULL DEFAULT 'home',
     "active" BOOLEAN NOT NULL DEFAULT true,
@@ -148,6 +149,20 @@ CREATE TABLE "CoverageRequest" (
 );
 
 -- CreateTable
+CREATE TABLE "CoverageLocation" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "name" TEXT NOT NULL,
+    "address" TEXT NOT NULL,
+    "latitude" REAL NOT NULL,
+    "longitude" REAL NOT NULL,
+    "markerIconUrl" TEXT,
+    "active" BOOLEAN NOT NULL DEFAULT true,
+    "sortOrder" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "SiteSettings" (
     "id" TEXT NOT NULL PRIMARY KEY DEFAULT 'main',
     "siteTitle" TEXT NOT NULL DEFAULT 'MEGANET',
@@ -172,6 +187,7 @@ CREATE TABLE "SiteSettings" (
     "whatsappCoverageMessage" TEXT NOT NULL DEFAULT 'Olá! Quero consultar cobertura da MEGANET.',
     "subscriberCenterUrl" TEXT,
     "careersUrl" TEXT,
+    "coverageMapEnabled" BOOLEAN NOT NULL DEFAULT false,
     "animationsEnabled" BOOLEAN NOT NULL DEFAULT true,
     "externalScripts" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

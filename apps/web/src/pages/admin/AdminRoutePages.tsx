@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ResourcePage } from './ResourcePage';
 import { SingletonPage } from './SingletonPage';
 import { FieldConfig } from '../../components/admin/AdminForm';
@@ -6,6 +6,7 @@ import { api } from '../../lib/api';
 import { formatMoney } from '../../lib/format';
 import { highlightIconOptions } from '../../lib/highlight-icons';
 import { roleLabels, type AdminRole } from '../../lib/admin-permissions';
+import { Card } from '../../components/ui/Card';
 
 const planTypes = [
   { label: 'Residencial', value: 'residencial' },
@@ -43,6 +44,7 @@ export function BannersAdminPage() {
     { name: 'title', label: 'Título / nome interno', required: true, placeholder: 'Ex.: Internet fibra para ir mais longe' },
     { name: 'carouselType', label: 'Tipo de carrossel', type: 'select', options: carouselTypes },
     { name: 'backgroundColor', label: 'Cor base do fundo', type: 'color', defaultValue: '#0877c8', helpText: 'Usada no Formato atual do carrossel.' },
+    { name: 'textColor', label: 'Cor dos textos', type: 'color', defaultValue: '#ffffff', helpText: 'Tambem ajusta o contraste dos botoes outline do carrossel.' },
     { name: 'subtitle', label: 'Subtítulo', type: 'textarea' },
     { name: 'buttonText', label: 'Texto do botão', placeholder: 'Ex.: Ver planos' },
     { name: 'buttonLink', label: 'Link do botão', placeholder: '/planos' },
@@ -87,6 +89,69 @@ export function ComplementsAdminPage() {
     { key: 'sortOrder', label: 'Ordem' },
     { key: 'active', label: 'Status', render: (item) => item.active ? 'Ativo' : 'Inativo' }
   ]} />;
+}
+
+function CoverageMapStatusCard() {
+  const queryClient = useQueryClient();
+  const { data, isLoading } = useQuery({
+    queryKey: ['admin-coverage-map'],
+    queryFn: () => api.get<{ data: { coverageMapEnabled: boolean } }>('/api/admin/coverage-map')
+  });
+  const enabled = Boolean(data?.data?.coverageMapEnabled);
+  const updateStatus = useMutation({
+    mutationFn: (coverageMapEnabled: boolean) => api.put('/api/admin/coverage-map', { coverageMapEnabled }),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin-coverage-map'] }),
+        queryClient.invalidateQueries({ queryKey: ['home'] }),
+        queryClient.invalidateQueries({ queryKey: ['public-settings'] }),
+        queryClient.invalidateQueries({ queryKey: ['coverage-locations'] })
+      ]);
+    }
+  });
+
+  return (
+    <Card className="p-5">
+      <label className="flex cursor-pointer items-start gap-3">
+        <input
+          className="mt-1"
+          type="checkbox"
+          checked={enabled}
+          disabled={isLoading || updateStatus.isPending}
+          onChange={(event) => updateStatus.mutate(event.target.checked)}
+        />
+        <span>
+          <strong className="block text-sm text-brand-900">Exibir mapa de cobertura no site</strong>
+          <small className="mt-1 block text-sm font-semibold leading-6 text-slate-500">Quando ativo, os locais marcados como ativos aparecem na home e na pagina de cobertura.</small>
+        </span>
+      </label>
+      {updateStatus.isError ? <p className="mt-3 rounded-lg bg-red-50 p-3 text-sm font-bold text-red-700">{updateStatus.error.message}</p> : null}
+    </Card>
+  );
+}
+
+export function CoverageLocationsAdminPage() {
+  return (
+    <div className="grid gap-6">
+      <CoverageMapStatusCard />
+      <ResourcePage title="Locais de atuacao" endpoint="/api/admin/coverage-locations" fields={[
+        { name: 'name', label: 'Nome do local', required: true, placeholder: 'Ex.: Centro, Bacabal, Arari' },
+        { name: 'latitude', label: 'Latitude', type: 'number', required: true, step: 'any', placeholder: '-4.22492' },
+        { name: 'longitude', label: 'Longitude', type: 'number', required: true, step: 'any', placeholder: '-44.78355' },
+        { name: 'markerIconUrl', label: 'Icone do marcador', type: 'image', imageHint: 'Opcional. Use PNG/WEBP quadrado, de preferencia com fundo transparente. Tamanho recomendado: 128 x 128px.', crop: { aspectRatio: 1, outputWidth: 128, outputHeight: 128 } },
+        { name: 'address', label: 'Endereco', type: 'textarea', required: true, placeholder: 'Rua, numero, bairro, cidade - UF' },
+        { name: 'sortOrder', label: 'Ordem', type: 'number' },
+        { name: 'active', label: 'Ativo', type: 'boolean' }
+      ]} columns={[
+        { key: 'name', label: 'Local' },
+        { key: 'markerIconUrl', label: 'Icone', render: (item) => item.markerIconUrl ? 'Imagem' : 'Padrao' },
+        { key: 'address', label: 'Endereco' },
+        { key: 'coordinates', label: 'Coordenadas', render: (item) => `${Number(item.latitude).toFixed(5)}, ${Number(item.longitude).toFixed(5)}` },
+        { key: 'sortOrder', label: 'Ordem' },
+        { key: 'active', label: 'Status', render: (item) => item.active ? 'Ativo' : 'Inativo' }
+      ]} />
+    </div>
+  );
 }
 
 export function PlansAdminPage() {

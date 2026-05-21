@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { BarChart3, FileText, Home, Image, LayoutDashboard, LogOut, MessageSquare, PackagePlus, Settings, Sparkles, Star, UserCog, Users, Wifi } from 'lucide-react';
+import { BarChart3, FileText, Home, Image, LayoutDashboard, LogOut, MapPinned, MessageSquare, PackagePlus, Settings, Sparkles, Star, UserCog, Users, Wifi } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { adminOnlyRoles, allAdminRoles, hasAdminRole, managerAdminRoles } from '../../lib/admin-permissions';
@@ -15,7 +15,8 @@ const links = [
   { to: '/admin/blog/categorias', label: 'Categorias', Icon: BarChart3, roles: managerAdminRoles },
   { to: '/admin/depoimentos', label: 'Depoimentos', Icon: Star, roles: managerAdminRoles },
   { to: '/admin/contatos', label: 'Contatos', Icon: MessageSquare, roles: allAdminRoles },
-  { to: '/admin/cobertura', label: 'Cobertura', Icon: Home, roles: allAdminRoles },
+  { to: '/admin/cobertura', label: 'Solic. cobertura', Icon: Home, roles: allAdminRoles },
+  { to: '/admin/mapa-cobertura', label: 'Mapa cobertura', Icon: MapPinned, roles: managerAdminRoles },
   { to: '/admin/sobre', label: 'Sobre', Icon: Users, roles: managerAdminRoles },
   { to: '/admin/redes-sociais', label: 'Redes sociais', Icon: Users, roles: managerAdminRoles },
   { to: '/admin/usuarios', label: 'Usuários', Icon: UserCog, roles: adminOnlyRoles },
@@ -47,7 +48,7 @@ export function AdminLayout() {
   return (
     <div className="min-h-screen bg-slate-100 lg:grid lg:grid-cols-[280px_1fr]">
       <aside className="border-r border-slate-200 bg-white p-4 lg:min-h-screen">
-        <div className="mb-6"><Logo compact logoUrl={publicSettings?.settings?.logoUrl} name={adminName} /></div>
+        <div className="mb-2"><Logo logoUrl={publicSettings?.settings?.logoUrl} name={adminName} /></div>
         <nav className="grid gap-1">
           {visibleLinks.map(({ to, label, Icon }) => (
             <NavLink

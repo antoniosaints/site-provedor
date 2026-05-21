@@ -25,6 +25,7 @@ export type FieldConfig = {
   uploadEndpoint?: string;
   defaultValue?: any;
   crop?: ImageCropConfig;
+  step?: string | number;
 };
 
 type CropEditorState = {
@@ -458,6 +459,7 @@ export function AdminForm({ fields, initial, onSubmit, onCancel }: { fields: Fie
               {field.helpText ? <p className="text-xs font-semibold text-slate-500">{field.helpText}</p> : null}
               <Input
                 type={inputType}
+                step={field.step}
                 required={field.required}
                 placeholder={inputType === 'color' ? undefined : placeholderFor(field)}
                 value={field.type === 'color' ? (values[field.name] || field.defaultValue || '#0877c8') : values[field.name] ?? ''}

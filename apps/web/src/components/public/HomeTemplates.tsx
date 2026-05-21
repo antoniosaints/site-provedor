@@ -337,7 +337,7 @@ export function HubHomeTemplate({ data, companyName }: HomeTemplateProps) {
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {serviceLinks(data).map(({ title, text, href, Icon, external }) => (
-              <a key={title} href={href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined} className="group rounded-lg border bg-slate-50 p-5 transition hover:-translate-y-1 hover:bg-white hover:shadow-soft" style={{ borderColor: alpha(theme.primaryRgb, 0.12) }}>
+              <a key={title} href={href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined} className="group rounded-lg border bg-slate-50 p-5 transition hover:bg-white hover:shadow-soft" style={{ borderColor: alpha(theme.primaryRgb, 0.12) }}>
                 <Icon size={28} style={{ color: theme.primary }} />
                 <h3 className="mt-5 font-display text-lg font-black text-brand-900">{title}</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>

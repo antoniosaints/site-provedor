@@ -23,7 +23,7 @@ export function MessagesPage({ title, endpoint, type }: { title: string; endpoin
     <section>
       <h1 className="font-display text-3xl font-bold text-brand-900">{title}</h1>
       <p className="mt-1 text-sm text-slate-500">Acompanhe solicitações, altere status e abra atendimento pelo WhatsApp.</p>
-      <Card className="mt-6 overflow-hidden">
+      <Card motion={false} className="mt-6 overflow-hidden">
         {isLoading ? <Loading /> : !data?.data?.length ? <EmptyState title="Nenhum atendimento recebido" /> : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">

@@ -151,7 +151,7 @@ export function PublicLayout() {
           © {new Date().getFullYear()} {companyName}. Todos os direitos reservados. {company?.cnpj ? `CNPJ ${company.cnpj}` : ''}
         </div>
       </footer>
-      <WhatsAppFloat phone={company?.whatsapp} message={settings?.whatsappSupportMessage} />
+      <WhatsAppFloat phone={company?.whatsapp} message={settings?.whatsappSupportMessage} color={settings?.whatsappFloatColor} iconUrl={settings?.whatsappFloatIconUrl} />
     </div>
   );
 }

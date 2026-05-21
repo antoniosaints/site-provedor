@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '../config/prisma.js';
 import { requireAuth, requireRoles } from '../middleware/auth.js';
-import { uploadImage } from '../middleware/upload.js';
+import { uploadImage, uploadPngImage } from '../middleware/upload.js';
 import { asyncHandler } from '../utils/async-handler.js';
 import { HttpError } from '../utils/http-error.js';
 import { uniqueSlug } from '../utils/slug.js';
@@ -182,6 +182,11 @@ router.post('/uploads/image', managerOnly, uploadImage.single('image'), (req, re
   res.status(201).json({ url: `/uploads/${req.file.filename}` });
 });
 
+router.post('/uploads/png', managerOnly, uploadPngImage.single('image'), (req, res) => {
+  if (!req.file) throw new HttpError(422, 'PNG obrigatorio.');
+  res.status(201).json({ url: `/uploads/${req.file.filename}` });
+});
+
 router.get('/banners', managerOnly, asyncHandler((req, res) => listCrud(req, res, 'banners', ['title', 'subtitle'])));
 router.get('/plans', managerOnly, asyncHandler((req, res) => listCrud(req, res, 'plans', ['name', 'description'])));
 router.get('/highlights', managerOnly, asyncHandler((req, res) => listCrud(req, res, 'featureHighlights', ['title', 'icon'])));
@@ -336,6 +341,13 @@ router.get('/settings', adminOnly, asyncHandler(async (_req, res) => {
 router.put('/settings', adminOnly, asyncHandler(async (req, res) => {
   const payload = { ...req.body };
   if (Array.isArray(payload.carouselFeatureBandItems)) payload.carouselFeatureBandItems = JSON.stringify(payload.carouselFeatureBandItems);
+  if (payload.whatsappFloatIconUrl !== undefined) {
+    const whatsappFloatIconUrl = String(payload.whatsappFloatIconUrl ?? '').trim();
+    if (whatsappFloatIconUrl && !whatsappFloatIconUrl.toLowerCase().split('?')[0].endsWith('.png')) {
+      throw new HttpError(422, 'O icone do botao flutuante deve ser um PNG.');
+    }
+    payload.whatsappFloatIconUrl = whatsappFloatIconUrl || null;
+  }
   const data = await prisma.siteSettings.upsert({
     where: { id: 'main' },
     update: payload,

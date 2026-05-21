@@ -4,6 +4,7 @@ import { Edit, Plus, Trash2 } from 'lucide-react';
 import { api, ApiList } from '../../lib/api';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { Modal } from '../../components/ui/Modal';
 import { EmptyState, Loading } from '../../components/ui/Status';
 import { AdminForm, FieldConfig } from '../../components/admin/AdminForm';
 
@@ -19,6 +20,7 @@ export function ResourcePage({ title, endpoint, fields, columns }: Props) {
   const [editing, setEditing] = useState<any | null>(null);
   const [creating, setCreating] = useState(false);
   const queryKey = useMemo(() => ['admin-resource', endpoint], [endpoint]);
+  const formOpen = creating || Boolean(editing);
   const activeFields = useMemo(() => typeof fields === 'function' ? fields(editing, creating) : fields, [creating, editing, fields]);
   const { data, isLoading } = useQuery({ queryKey, queryFn: () => api.get<ApiList<any>>(endpoint) });
   const save = useMutation({
@@ -33,6 +35,10 @@ export function ResourcePage({ title, endpoint, fields, columns }: Props) {
     mutationFn: (id: string) => api.delete(`${endpoint}/${id}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey })
   });
+  const closeForm = () => {
+    setCreating(false);
+    setEditing(null);
+  };
 
   return (
     <section>
@@ -41,19 +47,25 @@ export function ResourcePage({ title, endpoint, fields, columns }: Props) {
           <h1 className="font-display text-3xl font-bold text-brand-900">{title}</h1>
           <p className="mt-1 text-sm text-slate-500">Crie, edite, ative e organize os registros exibidos no site.</p>
         </div>
-        <Button onClick={() => setCreating(true)}><Plus size={17} /> Novo</Button>
+        <Button onClick={() => { setEditing(null); setCreating(true); }}><Plus size={17} /> Novo</Button>
       </div>
 
-      {(creating || editing) ? (
-        <div className="mt-6">
+      <Modal
+        open={formOpen}
+        title={editing ? `Editar ${title}` : `Novo ${title}`}
+        description="Preencha os campos e salve para atualizar o site."
+        size="xl"
+        onClose={closeForm}
+      >
+        {formOpen ? (
           <AdminForm
             fields={activeFields}
             initial={editing}
-            onCancel={() => { setCreating(false); setEditing(null); }}
+            onCancel={closeForm}
             onSubmit={async (values) => { await save.mutateAsync(values); }}
           />
-        </div>
-      ) : null}
+        ) : null}
+      </Modal>
 
       <Card className="mt-6 overflow-hidden">
         {isLoading ? <Loading /> : !data?.data?.length ? <EmptyState title="Nenhum registro encontrado" /> : (
@@ -71,7 +83,7 @@ export function ResourcePage({ title, endpoint, fields, columns }: Props) {
                     {columns.map((column) => <td key={column.key} className="px-4 py-3">{column.render ? column.render(item) : String(item[column.key] ?? '')}</td>)}
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-2">
-                        <Button type="button" variant="secondary" className="h-9 px-3" onClick={() => setEditing(item)}><Edit size={15} /></Button>
+                        <Button type="button" variant="secondary" className="h-9 px-3" onClick={() => { setCreating(false); setEditing(item); }}><Edit size={15} /></Button>
                         <Button type="button" variant="danger" className="h-9 px-3" onClick={() => window.confirm('Excluir este registro?') ? remove.mutate(item.id) : undefined}><Trash2 size={15} /></Button>
                       </div>
                     </td>

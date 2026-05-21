@@ -96,6 +96,10 @@ async function main() {
       await prisma.$executeRawUnsafe('ALTER TABLE "Banner" ADD COLUMN "carouselType" TEXT NOT NULL DEFAULT \'content\'');
       console.log('Added Banner.carouselType.');
     }
+    if (!(await columnExists('Banner', 'backgroundColor'))) {
+      await prisma.$executeRawUnsafe('ALTER TABLE "Banner" ADD COLUMN "backgroundColor" TEXT NOT NULL DEFAULT \'#0877c8\'');
+      console.log('Added Banner.backgroundColor.');
+    }
     if (!(await columnExists('InternetPlan', 'complementIds'))) {
       await prisma.$executeRawUnsafe('ALTER TABLE "InternetPlan" ADD COLUMN "complementIds" TEXT NOT NULL DEFAULT \'[]\'');
       console.log('Added InternetPlan.complementIds.');
@@ -107,7 +111,8 @@ async function main() {
       ['footerTextColor', "'#102133'"],
       ['adminSidebarTitle', "'MEGANET'"],
       ['siteTemplate', "'classic'"],
-      ['carouselFeatureBandItems', "'[\"Mega Fibra\",\"Suporte Total\",\"Ponto Gamer\",\"Wi-Fi 6\",\"Wi-Fi Plus\",\"Empresas\",\"Super Upload\"]'"]
+      ['carouselFeatureBandItems', "'[\"Mega Fibra\",\"Suporte Total\",\"Ponto Gamer\",\"Wi-Fi 6\",\"Wi-Fi Plus\",\"Empresas\",\"Super Upload\"]'"],
+      ['whatsappFloatColor', "'#20c7a5'"]
     ] as const;
 
     for (const [column, defaultValue] of siteSettingColumns) {
@@ -116,7 +121,7 @@ async function main() {
         console.log(`Added SiteSettings.${column}.`);
       }
     }
-    for (const column of ['subscriberCenterUrl', 'careersUrl'] as const) {
+    for (const column of ['subscriberCenterUrl', 'careersUrl', 'whatsappFloatIconUrl'] as const) {
       if (!(await columnExists('SiteSettings', column))) {
         await prisma.$executeRawUnsafe(`ALTER TABLE "SiteSettings" ADD COLUMN "${column}" TEXT`);
         console.log(`Added SiteSettings.${column}.`);

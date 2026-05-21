@@ -26,3 +26,17 @@ export const uploadImage = multer({
     cb(null, true);
   }
 });
+
+export const uploadPngImage = multer({
+  storage,
+  limits: {
+    fileSize: env.UPLOAD_MAX_MB * 1024 * 1024
+  },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype !== 'image/png') {
+      cb(new HttpError(422, 'Envie um arquivo PNG.'));
+      return;
+    }
+    cb(null, true);
+  }
+});

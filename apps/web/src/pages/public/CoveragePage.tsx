@@ -33,16 +33,16 @@ export function CoveragePage() {
           <h1 className={`mt-5 font-display text-4xl font-black ${dark ? 'text-white' : 'text-brand-900'}`}>Consulte disponibilidade no seu endereco</h1>
           <p className={`mt-4 text-lg leading-8 ${dark ? 'text-white/68' : 'text-slate-600'}`}>Preencha os dados e nossa equipe retornara pelo WhatsApp com a disponibilidade e as melhores opcoes.</p>
 
-          <Card className={`mt-8 p-6 ${dark ? 'border-white/10 bg-white/[0.07] text-white backdrop-blur' : 'bg-white'}`} style={{ borderColor: dark ? 'rgb(255 255 255 / 0.12)' : alpha(theme.primaryRgb, 0.12) }}>
+          <Card motion={false} className={`mt-8 p-6 ${dark ? 'border-white/10 bg-white/[0.07] text-white backdrop-blur' : 'bg-white'}`} style={{ borderColor: dark ? 'rgb(255 255 255 / 0.12)' : alpha(theme.primaryRgb, 0.12) }}>
             <form className="grid gap-4" onSubmit={handleSubmit((values) => mutation.mutate(values))}>
               <div className="grid gap-4 md:grid-cols-2">
-                <FieldWrap label="Nome"><Input required {...register('name')} /></FieldWrap>
-                <FieldWrap label="Telefone/WhatsApp"><Input required {...register('phone')} /></FieldWrap>
+                <FieldWrap label="Nome"><Input required placeholder="Seu nome completo" {...register('name')} /></FieldWrap>
+                <FieldWrap label="Telefone/WhatsApp"><Input required placeholder="(00) 00000-0000" {...register('phone')} /></FieldWrap>
               </div>
-              <FieldWrap label="Endereco"><Input required {...register('address')} /></FieldWrap>
+              <FieldWrap label="Endereco"><Input required placeholder="Rua, numero e complemento" {...register('address')} /></FieldWrap>
               <div className="grid gap-4 md:grid-cols-2">
-                <FieldWrap label="Bairro"><Input required {...register('neighborhood')} /></FieldWrap>
-                <FieldWrap label="Cidade"><Input required {...register('city')} /></FieldWrap>
+                <FieldWrap label="Bairro"><Input required placeholder="Seu bairro" {...register('neighborhood')} /></FieldWrap>
+                <FieldWrap label="Cidade"><Input required placeholder="Sua cidade" {...register('city')} /></FieldWrap>
               </div>
               <FieldWrap label="Plano de interesse">
                 <select className="h-11 rounded-lg border-slate-200 bg-white text-sm text-slate-900" {...register('planInterest')}>
@@ -50,7 +50,7 @@ export function CoveragePage() {
                   {plans.data?.data?.map((plan: any) => <option key={plan.id} value={plan.name}>{plan.name}</option>)}
                 </select>
               </FieldWrap>
-              <FieldWrap label="Referencia"><Textarea {...register('reference')} /></FieldWrap>
+              <FieldWrap label="Referencia"><Textarea placeholder="Ex.: proximo a escola, portao azul, loteamento..." {...register('reference')} /></FieldWrap>
               {mutation.isSuccess ? <p className="rounded-lg bg-emerald-50 p-3 text-sm font-bold text-emerald-700">Solicitacao registrada com sucesso.</p> : null}
               {mutation.isError ? <p className="rounded-lg bg-red-50 p-3 text-sm font-bold text-red-700">{mutation.error.message}</p> : null}
               <Button disabled={mutation.isPending} style={buttonStyle(theme, dark ? 'accent' : 'primary')}>Enviar consulta</Button>

@@ -51,8 +51,8 @@ export function LoginPage() {
           <p className="mt-2 text-sm text-slate-500">Entre para gerenciar o conteúdo do site MEGANET.</p>
         </div>
         <form className="mt-6 grid gap-4" onSubmit={handleSubmit((values) => mutation.mutate(values))}>
-          <FieldWrap label="E-mail"><Input type="email" required {...register('email')} /></FieldWrap>
-          <FieldWrap label="Senha"><Input type="password" required {...register('password')} /></FieldWrap>
+          <FieldWrap label="E-mail"><Input type="email" required placeholder="admin@empresa.com.br" {...register('email')} /></FieldWrap>
+          <FieldWrap label="Senha"><Input type="password" required placeholder="Digite sua senha" {...register('password')} /></FieldWrap>
           {mutation.isError ? <p className="rounded-lg bg-red-50 p-3 text-sm font-bold text-red-700">{mutation.error.message}</p> : null}
           <Button disabled={mutation.isPending}><Lock size={17} /> Entrar</Button>
         </form>

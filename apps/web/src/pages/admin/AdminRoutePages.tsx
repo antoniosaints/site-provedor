@@ -40,14 +40,15 @@ const siteTemplates = [
 
 export function BannersAdminPage() {
   return <ResourcePage title="Carrossel da Home" endpoint="/api/admin/banners" fields={[
-    { name: 'title', label: 'Título / nome interno', required: true },
+    { name: 'title', label: 'Título / nome interno', required: true, placeholder: 'Ex.: Internet fibra para ir mais longe' },
     { name: 'carouselType', label: 'Tipo de carrossel', type: 'select', options: carouselTypes },
+    { name: 'backgroundColor', label: 'Cor base do fundo', type: 'color', defaultValue: '#0877c8', helpText: 'Usada no Formato atual do carrossel.' },
     { name: 'subtitle', label: 'Subtítulo', type: 'textarea' },
-    { name: 'buttonText', label: 'Texto do botão' },
-    { name: 'buttonLink', label: 'Link do botão' },
-    { name: 'imageUrl', label: 'Imagem', type: 'image' },
-    { name: 'highlights', label: 'Destaques do slide, um por linha', type: 'array' },
-    { name: 'location', label: 'Local' },
+    { name: 'buttonText', label: 'Texto do botão', placeholder: 'Ex.: Ver planos' },
+    { name: 'buttonLink', label: 'Link do botão', placeholder: '/planos' },
+    { name: 'imageUrl', label: 'Imagem', type: 'image', imageHint: 'Formato atual: imagem lateral em PNG/WEBP por volta de 900 x 620px. Imagem estatica: banner amplo 1920 x 720px.', crop: { outputWidth: 1600, outputHeight: 900 } },
+    { name: 'highlights', label: 'Destaques do slide, um por linha', type: 'array', placeholder: 'Maior velocidade\nBaixa latencia\nWi-Fi otimizado' },
+    { name: 'location', label: 'Local', placeholder: 'home' },
     { name: 'sortOrder', label: 'Ordem', type: 'number' },
     { name: 'active', label: 'Ativo', type: 'boolean' }
   ]} columns={[
@@ -77,7 +78,7 @@ export function ComplementsAdminPage() {
   return <ResourcePage title="Complementos" endpoint="/api/admin/plan-complements" fields={[
     { name: 'name', label: 'Nome', required: true },
     { name: 'category', label: 'Tipo', type: 'select', options: complementTypes },
-    { name: 'logoUrl', label: 'Logo', type: 'image' },
+    { name: 'logoUrl', label: 'Logo', type: 'image', imageHint: 'Use PNG/WEBP com fundo transparente quando possivel. Tamanho recomendado: 512 x 512px ou logo horizontal ate 800px.', crop: { outputWidth: 512, outputHeight: 512 } },
     { name: 'sortOrder', label: 'Ordem', type: 'number' },
     { name: 'active', label: 'Ativo', type: 'boolean' }
   ]} columns={[
@@ -143,7 +144,7 @@ export function PostsAdminPage() {
     { name: 'slug', label: 'Slug' },
     { name: 'summary', label: 'Resumo', type: 'textarea' },
     { name: 'content', label: 'Conteúdo', type: 'richtext', required: true },
-    { name: 'coverImageUrl', label: 'Imagem de capa', type: 'image' },
+    { name: 'coverImageUrl', label: 'Imagem de capa', type: 'image', imageHint: 'Tamanho recomendado: 1200 x 630px para capa e compartilhamento.', crop: { aspectRatio: 1200 / 630, outputWidth: 1200, outputHeight: 630 } },
     { name: 'author', label: 'Autor' },
     { name: 'status', label: 'Status', type: 'select', options: statuses },
     { name: 'categoryId', label: 'Categoria', type: 'select', options: categories.data?.data?.map((item: any) => ({ label: item.name, value: item.id })) ?? [] },
@@ -163,7 +164,7 @@ export function TestimonialsAdminPage() {
     { name: 'name', label: 'Cliente', required: true },
     { name: 'text', label: 'Depoimento', type: 'textarea', required: true },
     { name: 'location', label: 'Cidade/bairro' },
-    { name: 'avatarUrl', label: 'Foto/avatar', type: 'image' },
+    { name: 'avatarUrl', label: 'Foto/avatar', type: 'image', imageHint: 'Tamanho recomendado: 512 x 512px, rosto centralizado.', crop: { aspectRatio: 1, outputWidth: 512, outputHeight: 512 } },
     { name: 'rating', label: 'Nota', type: 'number' },
     { name: 'sortOrder', label: 'Ordem', type: 'number' },
     { name: 'active', label: 'Ativo', type: 'boolean' }
@@ -208,14 +209,16 @@ export function SettingsAdminPage() {
     { name: 'adminSidebarTitle', label: 'Nome no topo do admin' },
     { name: 'siteTemplate', label: 'Template visual do site', type: 'select', options: siteTemplates },
     { name: 'seoDescription', label: 'Descrição SEO padrão', type: 'textarea' },
-    { name: 'logoUrl', label: 'Logo', type: 'image' },
-    { name: 'faviconUrl', label: 'Favicon', type: 'image' },
+    { name: 'logoUrl', label: 'Logo', type: 'image', imageHint: 'Use PNG/WEBP com fundo transparente. Tamanho recomendado: 600 x 200px para logo horizontal.', crop: { aspectRatio: 3, outputWidth: 600, outputHeight: 200 } },
+    { name: 'faviconUrl', label: 'Favicon', type: 'image', imageHint: 'Use PNG ou ICO quadrado. Tamanho recomendado: 64 x 64px.', crop: { aspectRatio: 1, outputWidth: 64, outputHeight: 64, outputType: 'image/png' } },
     { name: 'primaryColor', label: 'Cor principal', type: 'color' },
     { name: 'secondaryColor', label: 'Cor secundária', type: 'color' },
     { name: 'headerBackgroundColor', label: 'Cor de fundo do header', type: 'color' },
     { name: 'headerTextColor', label: 'Cor dos textos do header', type: 'color' },
     { name: 'footerBackgroundColor', label: 'Cor de fundo do footer', type: 'color' },
     { name: 'footerTextColor', label: 'Cor dos textos do footer', type: 'color' },
+    { name: 'whatsappFloatColor', label: 'Cor do botao flutuante', type: 'color', defaultValue: '#20c7a5' },
+    { name: 'whatsappFloatIconUrl', label: 'Icone do botao flutuante (PNG)', type: 'image', accept: 'image/png,.png', uploadEndpoint: '/api/admin/uploads/png', imageHint: 'Envie obrigatoriamente um PNG quadrado com fundo transparente. Tamanho recomendado: 96 x 96px.', crop: { aspectRatio: 1, outputWidth: 96, outputHeight: 96, outputType: 'image/png' } },
     { name: 'ctaPlansText', label: 'Texto CTA planos' },
     { name: 'ctaWhatsappText', label: 'Texto CTA WhatsApp' },
     { name: 'whatsappContractMessage', label: 'Mensagem contratação', type: 'textarea' },
@@ -246,7 +249,7 @@ export function AboutAdminPage() {
       { name: 'aboutText', label: 'Texto sobre a empresa', type: 'textarea' },
       { name: 'history', label: 'História', type: 'textarea' },
       { name: 'differentials', label: 'Diferenciais, um por linha', type: 'array' },
-      { name: 'institutionalImageUrl', label: 'Imagem institucional', type: 'image' },
+      { name: 'institutionalImageUrl', label: 'Imagem institucional', type: 'image', imageHint: 'Tamanho recomendado: 1200 x 800px, com boa margem para cortes responsivos.', crop: { aspectRatio: 1.5, outputWidth: 1200, outputHeight: 800 } },
       { name: 'yearsInBusiness', label: 'Anos de atuação', type: 'number' },
       { name: 'customerCount', label: 'Número de clientes', type: 'number' },
       { name: 'citiesServed', label: 'Cidades atendidas' }

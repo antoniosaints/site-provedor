@@ -101,6 +101,7 @@ p {
 
 .motion-enabled .motion-pulse-soft {
   animation: meganet-pulse 2.8s ease-in-out infinite;
+  --whatsapp-float-shadow: rgba(32, 199, 165, 0.28);
 }
 
 .motion-enabled .motion-icon {
@@ -144,7 +145,7 @@ img {
 
 @keyframes meganet-pulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(32, 199, 165, 0.28);
+    box-shadow: 0 0 0 0 var(--whatsapp-float-shadow);
   }
   50% {
     box-shadow: 0 0 0 12px rgba(32, 199, 165, 0);

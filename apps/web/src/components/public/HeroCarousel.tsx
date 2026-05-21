@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, MapPinned, Wifi } from 'lucide-react';
 import { assetUrl } from '../../lib/api';
 import { getHighlightIcon } from '../../lib/highlight-icons';
+import { hexToRgb, normalizeHex } from '../../lib/site-theme';
 import { ButtonLink } from '../ui/Button';
 
 type HeroSlide = {
@@ -12,6 +13,7 @@ type HeroSlide = {
     buttonLink?: string | null;
     imageUrl?: string | null;
     carouselType?: string | null;
+    backgroundColor?: string | null;
     highlights?: string[];
 };
 
@@ -39,6 +41,7 @@ const fallbackSlides: HeroSlide[] = [
     buttonLink: '/planos',
     imageUrl: null,
     carouselType: 'content',
+    backgroundColor: '#0877c8',
     highlights: ['Maior velocidade', 'Segurança aprimorada', 'Latência reduzida', 'Mais dispositivos']
   }
 ];
@@ -64,6 +67,26 @@ function normalizeFeatureBandItems(items?: FeatureBandItem[]) {
       };
     })
     .filter((item) => item.title.trim().length > 0);
+}
+
+function rgba(color: string, opacity: number) {
+  return `rgb(${hexToRgb(color).join(' ')} / ${opacity})`;
+}
+
+function mix(color: string, target: string, amount: number) {
+  const sourceRgb = hexToRgb(color);
+  const targetRgb = hexToRgb(target);
+  const mixed = sourceRgb.map((channel, index) => Math.round(channel + ((targetRgb[index] ?? channel) - channel) * amount));
+  return `#${mixed.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function carouselBackground(color: unknown) {
+  const base = normalizeHex(color, '#0877c8');
+  const deep = mix(base, '#000000', 0.22);
+  const light = mix(base, '#ffffff', 0.42);
+  const accent = mix(base, '#ffffff', 0.18);
+
+  return `radial-gradient(circle at 78% 20%,${rgba(light, 0.55)},transparent 24%),radial-gradient(circle at 8% 88%,${rgba(accent, 0.7)},transparent 28%),linear-gradient(120deg,${deep} 0%,${light} 52%,${base} 100%)`;
 }
 
 export function HeroCarousel({ banners, companyName = 'MEGANET', featureBandItems }: HeroCarouselProps) {
@@ -93,7 +116,7 @@ export function HeroCarousel({ banners, companyName = 'MEGANET', featureBandItem
         <img src={assetUrl(slide.imageUrl)} alt="" className="absolute inset-0 h-full w-full object-cover" />
       ) : (
         <>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_20%,rgba(216,239,255,.55),transparent_24%),radial-gradient(circle_at_8%_88%,rgba(15,143,232,.7),transparent_28%),linear-gradient(120deg,#0669ad_0%,#04bce7_52%,#0877c8_100%)]" />
+          <div className="absolute inset-0" style={{ background: carouselBackground(slide.backgroundColor) }} />
           <div className="absolute inset-0 opacity-50 [background-image:linear-gradient(115deg,transparent_0%,transparent_46%,rgba(255,255,255,.28)_47%,transparent_49%),linear-gradient(105deg,transparent_0%,transparent_58%,rgba(255,255,255,.18)_59%,transparent_61%)]" />
         </>
       )}

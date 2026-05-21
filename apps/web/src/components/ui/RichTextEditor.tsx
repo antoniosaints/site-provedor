@@ -5,12 +5,12 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { Bold, Heading2, Italic, LinkIcon, List } from 'lucide-react';
 import { Button } from './Button';
 
-export function RichTextEditor({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+export function RichTextEditor({ value, placeholder = 'Escreva o conteudo completo do post...', onChange }: { value: string; placeholder?: string; onChange: (value: string) => void }) {
   const editor = useEditor({
     extensions: [
       StarterKit,
       Link.configure({ openOnClick: false }),
-      Placeholder.configure({ placeholder: 'Escreva o conteúdo completo do post...' })
+      Placeholder.configure({ placeholder })
     ],
     content: value || '',
     onUpdate: ({ editor }) => onChange(editor.getHTML())

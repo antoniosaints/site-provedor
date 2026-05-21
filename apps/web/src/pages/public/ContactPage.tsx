@@ -44,14 +44,14 @@ export function ContactPage() {
             </ThemedLink>
           </div>
 
-          <Card className={`p-6 ${dark ? 'border-white/10 bg-white/[0.07] text-white backdrop-blur' : 'bg-white'}`} style={{ borderColor: dark ? 'rgb(255 255 255 / 0.12)' : alpha(theme.primaryRgb, 0.12) }}>
+          <Card motion={false} className={`p-6 ${dark ? 'border-white/10 bg-white/[0.07] text-white backdrop-blur' : 'bg-white'}`} style={{ borderColor: dark ? 'rgb(255 255 255 / 0.12)' : alpha(theme.primaryRgb, 0.12) }}>
             <form className="grid gap-4" onSubmit={handleSubmit((values) => mutation.mutate(values))}>
               <div className="grid gap-4 md:grid-cols-2">
-                <FieldWrap label="Nome"><Input required {...register('name')} /></FieldWrap>
-                <FieldWrap label="Telefone/WhatsApp"><Input required {...register('phone')} /></FieldWrap>
+                <FieldWrap label="Nome"><Input required placeholder="Seu nome completo" {...register('name')} /></FieldWrap>
+                <FieldWrap label="Telefone/WhatsApp"><Input required placeholder="(00) 00000-0000" {...register('phone')} /></FieldWrap>
               </div>
               <div className="grid gap-4 md:grid-cols-2">
-                <FieldWrap label="E-mail"><Input type="email" {...register('email')} /></FieldWrap>
+                <FieldWrap label="E-mail"><Input type="email" placeholder="voce@email.com" {...register('email')} /></FieldWrap>
                 <FieldWrap label="Tipo de solicitacao">
                   <Select {...register('requestType')}>
                     <option value="contratacao">Contratacao</option>
@@ -62,8 +62,8 @@ export function ContactPage() {
                   </Select>
                 </FieldWrap>
               </div>
-              <FieldWrap label="Assunto"><Input {...register('subject')} /></FieldWrap>
-              <FieldWrap label="Mensagem"><Textarea required {...register('message')} /></FieldWrap>
+              <FieldWrap label="Assunto"><Input placeholder="Ex.: Quero contratar internet fibra" {...register('subject')} /></FieldWrap>
+              <FieldWrap label="Mensagem"><Textarea required placeholder="Conte rapidamente como podemos ajudar." {...register('message')} /></FieldWrap>
               {mutation.isSuccess ? <p className="rounded-lg bg-emerald-50 p-3 text-sm font-bold text-emerald-700">Mensagem enviada com sucesso.</p> : null}
               {mutation.isError ? <p className="rounded-lg bg-red-50 p-3 text-sm font-bold text-red-700">{mutation.error.message}</p> : null}
               <Button disabled={formState.isSubmitting || mutation.isPending} style={buttonStyle(theme, dark ? 'accent' : 'primary')}>Enviar mensagem</Button>

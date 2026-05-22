@@ -245,11 +245,13 @@ export function SocialLinksAdminPage() {
   return <ResourcePage title="Redes sociais" endpoint="/api/admin/social-links" fields={[
     { name: 'name', label: 'Nome', required: true },
     { name: 'url', label: 'URL', required: true },
+    { name: 'iconUrl', label: 'Icone da rede social', type: 'image', imageHint: 'Opcional. Envie a logo da rede social em PNG/WEBP, de preferencia quadrada e com fundo transparente. Tamanho recomendado: 128 x 128px.', crop: { aspectRatio: 1, outputWidth: 128, outputHeight: 128 } },
     { name: 'sortOrder', label: 'Ordem', type: 'number' },
     { name: 'active', label: 'Ativa', type: 'boolean' }
   ]} columns={[
     { key: 'name', label: 'Rede' },
     { key: 'url', label: 'URL' },
+    { key: 'iconUrl', label: 'Icone', render: (item) => item.iconUrl ? 'Imagem' : 'Padrao' },
     { key: 'active', label: 'Status', render: (item) => item.active ? 'Ativa' : 'Inativa' }
   ]} />;
 }

@@ -162,6 +162,10 @@ async function main() {
       await prisma.$executeRawUnsafe('ALTER TABLE "CoverageLocation" ADD COLUMN "markerIconUrl" TEXT');
       console.log('Added CoverageLocation.markerIconUrl.');
     }
+    if (!(await columnExists('SocialLink', 'iconUrl'))) {
+      await prisma.$executeRawUnsafe('ALTER TABLE "SocialLink" ADD COLUMN "iconUrl" TEXT');
+      console.log('Added SocialLink.iconUrl.');
+    }
     await seedFeatureHighlightsFromSettings();
     console.log('Database already has the initial schema. Skipping migration.');
     return;

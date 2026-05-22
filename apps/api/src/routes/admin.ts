@@ -94,6 +94,9 @@ async function preparePayload(model: DelegateName, body: any, id?: string) {
     payload.longitude = Number(payload.longitude);
     payload.markerIconUrl = String(payload.markerIconUrl ?? '').trim() || null;
   }
+  if (model === 'socialLinks') {
+    payload.iconUrl = String(payload.iconUrl ?? '').trim() || null;
+  }
   if (payload.price !== undefined && payload.priceCents === undefined) {
     payload.priceCents = Math.round(Number(payload.price) * 100);
     delete payload.price;

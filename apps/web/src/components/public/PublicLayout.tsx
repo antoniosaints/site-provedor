@@ -1,9 +1,9 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { Mail, MapPin, Menu, Phone, X } from 'lucide-react';
+import { ExternalLink, Mail, MapPin, Menu, Phone, X } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
-import { api } from '../../lib/api';
+import { api, assetUrl } from '../../lib/api';
 import { whatsappLink } from '../../lib/format';
 import { ButtonLink } from '../ui/Button';
 import { Logo } from './Logo';
@@ -142,9 +142,16 @@ export function PublicLayout() {
               {company?.email ? <span className="flex gap-2"><Mail size={17} /> {company.email}</span> : null}
               {company?.address ? <span className="flex gap-2"><MapPin size={17} /> {company.address}</span> : null}
             </div>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {data?.socialLinks?.map((link) => <a key={link.id} className="rounded-full px-3 py-1 text-xs font-bold" style={{ backgroundColor: alpha(secondaryColor, 0.14), color: secondaryColor }} href={link.url} target="_blank" rel="noreferrer">{link.name}</a>)}
-            </div>
+            {data?.socialLinks?.length ? (
+              <div className="mt-5 grid gap-3 text-sm opacity-75">
+                {data.socialLinks.map((link) => (
+                  <a key={link.id} className="flex items-center gap-2 font-semibold hover:opacity-100" href={link.url} target="_blank" rel="noreferrer">
+                    {link.iconUrl ? <img src={assetUrl(link.iconUrl)} alt="" className="h-[17px] w-[17px] shrink-0 object-contain" /> : <ExternalLink className="shrink-0" size={17} style={{ color: secondaryColor }} />}
+                    <span>{link.name}</span>
+                  </a>
+                ))}
+              </div>
+            ) : null}
           </div>
         </div>
         <div className="border-t border-current/10 px-4 py-5 text-center text-xs font-semibold opacity-70">
